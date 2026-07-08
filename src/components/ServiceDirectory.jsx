@@ -700,7 +700,6 @@ Include specific landmarks or elevator locations in your response.`;
                 </div>
               )}
             </div>
-
           </div>
 
           {/* INTERACTIVE STADIUM MAP (SVG) */}
@@ -708,55 +707,167 @@ Include specific landmarks or elevator locations in your response.`;
             highVisibility ? 'border-4 border-black dark:border-zinc-900 bg-white text-black font-bold' : 'border-zinc-200 dark:border-zinc-800'
           }`}>
             <div>
-              <h3 className="font-extrabold text-sm text-zinc-900 dark:text-zinc-150 leading-tight">
-                Interactive Stadium Map
+              <h3 className="font-extrabold text-sm text-zinc-900 dark:text-zinc-150 flex items-center gap-2">
+                <Compass className="w-4.5 h-4.5 text-emerald-500" />
+                <span>ArenaAssist Live Telemetry Map</span>
               </h3>
-              <p className="text-[10px] text-zinc-500 dark:text-zinc-400 mt-1">
-                Tap a gate to automatically set your start location and calculate your path. Gates are color-coded by real-time queue fullness.
+              <p className="text-[10px] text-zinc-500 dark:text-zinc-400">
+                Click any outer gate node to set your starting position. The mission-control HUD automatically calculates active waypoint trajectories.
               </p>
             </div>
 
             {/* Stadium Map Circle Design */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
               
               {/* SVG Map (col-span-2) */}
-              <div className="md:col-span-2 flex items-center justify-center max-w-[420px] mx-auto w-full">
-                <svg viewBox="-240 -230 480 460" className="w-full h-auto select-none">
-                  {/* Outer Rings */}
-                  <circle r="175" fill="none" stroke="#e4e4e7" className="dark:stroke-zinc-800" strokeWidth="1" strokeDasharray="4 6" />
-                  <circle r="145" fill="none" stroke="#f4f4f5" className="dark:stroke-zinc-900" strokeWidth="1" />
-                  
-                  {/* Soccer Pitch Center */}
-                  <rect x="-55" y="-35" width="110" height="70" rx="4" fill="#0A5C36" stroke="rgba(255,255,255,0.2)" strokeWidth="1.5" />
-                  <line x1="0" y1="-35" x2="0" y2="35" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-                  <circle r="12" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1" />
-                  
-                  {/* Stadium Seating Zones */}
-                  {/* North Sector */}
-                  <path d="M 85 -100 A 130 130 0 0 0 -85 -100 L -40 -48 A 62 62 0 0 1 40 -48 Z" fill="#27272a" className="dark:fill-zinc-900/50" stroke="#3f3f46" strokeWidth="1.2" />
-                  {/* East Sector */}
-                  <path d="M 100 85 A 130 130 0 0 0 100 -85 L 48 -40 A 62 62 0 0 1 48 40 Z" fill="#27272a" className="dark:fill-zinc-900/50" stroke="#3f3f46" strokeWidth="1.2" />
-                  {/* South Sector */}
-                  <path d="M -85 100 A 130 130 0 0 0 85 100 L 40 48 A 62 62 0 0 1 -40 48 Z" fill="#27272a" className="dark:fill-zinc-900/50" stroke="#3f3f46" strokeWidth="1.2" />
-                  {/* West Sector */}
-                  <path d="M -100 -85 A 130 130 0 0 0 -100 85 L -48 40 A 62 62 0 0 1 -48 -40 Z" fill="#27272a" className="dark:fill-zinc-900/50" stroke="#3f3f46" strokeWidth="1.2" />
+              <div className="lg:col-span-2 flex items-center justify-center max-w-[450px] mx-auto w-full bg-zinc-50/50 dark:bg-zinc-950/20 p-4 rounded-3xl border border-zinc-150 dark:border-zinc-900 relative overflow-hidden">
+                
+                {/* HUD Overlay Watermark */}
+                <div className="absolute top-3 left-4 text-[8px] font-mono opacity-50 dark:opacity-30 select-none">
+                  SYSTEM: OPERATIONAL<br/>
+                  GRID: NY-METLIFE-W26<br/>
+                  GPS: 40.8135° N, 74.0745° W
+                </div>
 
-                  {/* Dynamic Route Highlight Line */}
+                <svg viewBox="-240 -230 480 460" className="w-full h-auto select-none">
+                  <defs>
+                    {/* Soccer Pitch Stripe Pattern */}
+                    <pattern id="pitchStripes" width="20" height="70" patternUnits="userSpaceOnUse">
+                      <rect width="10" height="70" fill="#15803d" />
+                      <rect x="10" width="10" height="70" fill="#166534" />
+                    </pattern>
+                  </defs>
+
+                  {/* Compass HUD outer circle ticks */}
+                  <circle r="215" fill="none" stroke="#22c55e" strokeWidth="0.5" strokeOpacity="0.15" />
+                  <circle r="195" fill="none" stroke="#22c55e" strokeWidth="1" strokeOpacity="0.25" strokeDasharray="3 20" />
+                  
+                  {/* Compass Cardinal Points */}
+                  <text x="0" y="-202" textAnchor="middle" fontSize="9" fontWeight="900" fill="#22c55e" fillOpacity="0.6">N</text>
+                  <text x="202" y="3" textAnchor="middle" fontSize="9" fontWeight="900" fill="#22c55e" fillOpacity="0.6">E</text>
+                  <text x="0" y="209" textAnchor="middle" fontSize="9" fontWeight="900" fill="#22c55e" fillOpacity="0.6">S</text>
+                  <text x="-202" y="3" textAnchor="middle" fontSize="9" fontWeight="900" fill="#22c55e" fillOpacity="0.6">W</text>
+
+                  {/* Concentric Stadium Outlines */}
+                  <circle r="175" fill="none" stroke="#e4e4e7" className="dark:stroke-zinc-800" strokeWidth="1.5" strokeDasharray="4 6" />
+                  <circle r="145" fill="none" stroke="#f4f4f5" className="dark:stroke-zinc-900" strokeWidth="1" />
+                  <circle r="115" fill="none" stroke="#e4e4e7" className="dark:stroke-zinc-850" strokeWidth="1" strokeDasharray="2 4" />
+                  
+                  {/* Detailed Soccer Pitch Center */}
+                  <g>
+                    {/* Pitch green grass background */}
+                    <rect x="-55" y="-35" width="110" height="70" rx="2" fill="url(#pitchStripes)" stroke="#ffffff" strokeWidth="1.5" strokeOpacity="0.8" />
+                    {/* Midfield line */}
+                    <line x1="0" y1="-35" x2="0" y2="35" stroke="#ffffff" strokeWidth="1.2" strokeOpacity="0.8" />
+                    {/* Midfield center circle */}
+                    <circle r="15" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeOpacity="0.8" />
+                    <circle r="1" fill="#ffffff" />
+                    {/* Penalty areas */}
+                    <rect x="-55" y="-18" width="18" height="36" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeOpacity="0.8" />
+                    <rect x="37" y="-18" width="18" height="36" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeOpacity="0.8" />
+                    {/* Goal areas */}
+                    <rect x="-55" y="-8" width="6" height="16" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeOpacity="0.8" />
+                    <rect x="49" y="-8" width="6" height="16" fill="none" stroke="#ffffff" strokeWidth="1.2" strokeOpacity="0.8" />
+                  </g>
+                  
+                  {/* Detailed Multi-Tier Stadium Seating blocks */}
+                  {/* North Sector blocks (Split into 3 sub-blocks for premium look) */}
+                  <path d="M 85 -100 A 130 130 0 0 0 -85 -100 L -60 -70 A 90 90 0 0 1 60 -70 Z" fill="#27272a" className="dark:fill-zinc-900/60" stroke="#3f3f46" strokeWidth="1" />
+                  <path d="M 80 -105 A 135 135 0 0 0 30 -131 L 20 -95 A 95 95 0 0 1 60 -75 Z" fill="#18181b" className="dark:fill-zinc-850/40" stroke="#3f3f46" strokeWidth="0.8" />
+                  <path d="M -30 -131 A 135 135 0 0 0 -80 -105 L -60 -75 A 95 95 0 0 1 -20 -95 Z" fill="#18181b" className="dark:fill-zinc-850/40" stroke="#3f3f46" strokeWidth="0.8" />
+
+                  {/* East Sector blocks */}
+                  <path d="M 100 85 A 130 130 0 0 0 100 -85 L 70 -60 A 90 90 0 0 1 70 60 Z" fill="#27272a" className="dark:fill-zinc-900/60" stroke="#3f3f46" strokeWidth="1" />
+                  <path d="M 105 80 A 135 135 0 0 0 131 30 L 95 20 A 95 95 0 0 1 75 60 Z" fill="#18181b" className="dark:fill-zinc-850/40" stroke="#3f3f46" strokeWidth="0.8" />
+                  <path d="M 131 -30 A 135 135 0 0 0 105 -80 L 75 -60 A 95 95 0 0 1 95 -20 Z" fill="#18181b" className="dark:fill-zinc-850/40" stroke="#3f3f46" strokeWidth="0.8" />
+
+                  {/* South Sector blocks */}
+                  <path d="M -85 100 A 130 130 0 0 0 85 100 L 60 70 A 90 90 0 0 1 -60 70 Z" fill="#27272a" className="dark:fill-zinc-900/60" stroke="#3f3f46" strokeWidth="1" />
+                  <path d="M 80 105 A 135 135 0 0 1 30 131 L 20 95 A 95 95 0 0 0 60 75 Z" fill="#18181b" className="dark:fill-zinc-850/40" stroke="#3f3f46" strokeWidth="0.8" />
+                  <path d="M -30 131 A 135 135 0 0 1 -80 105 L -60 75 A 95 95 0 0 0 -20 95 Z" fill="#18181b" className="dark:fill-zinc-850/40" stroke="#3f3f46" strokeWidth="0.8" />
+
+                  {/* West Sector blocks */}
+                  <path d="M -100 -85 A 130 130 0 0 0 -100 85 L -70 60 A 90 90 0 0 1 -70 -60 Z" fill="#27272a" className="dark:fill-zinc-900/60" stroke="#3f3f46" strokeWidth="1" />
+                  <path d="M -105 80 A 135 135 0 0 1 -131 30 L -95 20 A 95 95 0 0 0 -75 60 Z" fill="#18181b" className="dark:fill-zinc-850/40" stroke="#3f3f46" strokeWidth="0.8" />
+                  <path d="M -131 -30 A 135 135 0 0 1 -105 -80 L -75 -60 A 95 95 0 0 0 -95 -20 Z" fill="#18181b" className="dark:fill-zinc-850/40" stroke="#3f3f46" strokeWidth="0.8" />
+
+                  {/* Dynamic Route Highlight Line (Multi-segment curved paths representing real concourse walks!) */}
                   {routeResult && (
-                    <line 
-                      x1={startPoint === 'gate-b' ? 130 : startPoint === 'gate-c' ? 180 : startPoint === 'gate-d' ? 130 : startPoint === 'gate-e' ? 0 : startPoint === 'gate-f' ? -130 : startPoint === 'gate-g' ? -180 : startPoint === 'gate-h' ? -130 : 0} 
-                      y1={startPoint === 'gate-b' ? -130 : startPoint === 'gate-c' ? 0 : startPoint === 'gate-d' ? 130 : startPoint === 'gate-e' ? 180 : startPoint === 'gate-f' ? 130 : startPoint === 'gate-g' ? 0 : startPoint === 'gate-h' ? -130 : -180} 
-                      x2="0" 
-                      y2="0" 
-                      stroke="#d946ef" 
-                      strokeWidth="3.5" 
-                      strokeDasharray="6 4" 
-                      className="animate-pulse"
-                      style={{ filter: 'drop-shadow(0 0 5px #d946ef)' }} 
-                    />
+                    <g>
+                      {/* Active Pathway line */}
+                      <path 
+                        d={
+                          startPoint === 'gate-a' ? "M 0,-184 L 0,-130 C 0,-90 -30,-70 -30,-50" :
+                          startPoint === 'gate-b' ? "M 130,-130 L 98,-98 C 80,-80 60,-60 40,-45" :
+                          startPoint === 'gate-c' ? "M 184,0 L 130,0 C 100,0 70,20 50,30" :
+                          startPoint === 'gate-d' ? "M 130,130 L 98,98 C 80,80 60,60 40,45" :
+                          startPoint === 'gate-e' ? "M 0,184 L 0,130 C 0,90 30,70 30,50" :
+                          startPoint === 'gate-f' ? "M -130,130 L -98,98 C -80,80 -60,60 -40,45" :
+                          startPoint === 'gate-g' ? "M -184,0 L -130,0 C -100,0 -70,-20 -50,-30" :
+                          /* gate-h */ "M -130,-130 L -98,-98 C -80,-80 -60,-60 -40,-45"
+                        } 
+                        fill="none" 
+                        stroke={needs.wheelchair ? "#3b82f6" : "#d946ef"} 
+                        strokeWidth="4" 
+                        className="route-flow-line" 
+                        style={{ filter: needs.wheelchair ? 'drop-shadow(0 0 6px rgba(59,130,246,0.8))' : 'drop-shadow(0 0 6px rgba(217,70,239,0.8))' }}
+                      />
+
+                      {/* Blinking Pin indicator at the route destination */}
+                      <circle 
+                        cx={
+                          startPoint === 'gate-a' ? -30 :
+                          startPoint === 'gate-b' ? 40 :
+                          startPoint === 'gate-c' ? 50 :
+                          startPoint === 'gate-d' ? 40 :
+                          startPoint === 'gate-e' ? 30 :
+                          startPoint === 'gate-f' ? -40 :
+                          startPoint === 'gate-g' ? -50 :
+                          /* gate-h */ -40
+                        } 
+                        cy={
+                          startPoint === 'gate-a' ? -50 :
+                          startPoint === 'gate-b' ? -45 :
+                          startPoint === 'gate-c' ? 30 :
+                          startPoint === 'gate-d' ? 45 :
+                          startPoint === 'gate-e' ? 50 :
+                          startPoint === 'gate-f' ? 45 :
+                          startPoint === 'gate-g' ? -30 :
+                          /* gate-h */ -45
+                        } 
+                        r="8" 
+                        fill={needs.wheelchair ? "#3b82f6" : "#d946ef"} 
+                        className="animate-ping" 
+                        style={{ transformOrigin: 'center' }}
+                      />
+                      <circle 
+                        cx={
+                          startPoint === 'gate-a' ? -30 :
+                          startPoint === 'gate-b' ? 40 :
+                          startPoint === 'gate-c' ? 50 :
+                          startPoint === 'gate-d' ? 40 :
+                          startPoint === 'gate-e' ? 30 :
+                          startPoint === 'gate-f' ? -40 :
+                          startPoint === 'gate-g' ? -50 :
+                          /* gate-h */ -40
+                        } 
+                        cy={
+                          startPoint === 'gate-a' ? -50 :
+                          startPoint === 'gate-b' ? -45 :
+                          startPoint === 'gate-c' ? 30 :
+                          startPoint === 'gate-d' ? 45 :
+                          startPoint === 'gate-e' ? 50 :
+                          startPoint === 'gate-f' ? 45 :
+                          startPoint === 'gate-g' ? -30 :
+                          /* gate-h */ -45
+                        } 
+                        r="4" 
+                        fill="#ffffff" 
+                      />
+                    </g>
                   )}
 
-                  {/* INTERACTIVE GATES A to H */}
+                  {/* INTERACTIVE GATES A to H (Glowing Pills!) */}
                   {/* Gate A (North) */}
                   <g 
                     onClick={() => setStartPoint('gate-a')}
@@ -766,12 +877,12 @@ Include specific landmarks or elevator locations in your response.`;
                     aria-label={`Select Gate A. queue is ${gateQueueInfo['gate-a'].percentage}% full`}
                     onKeyDown={(e) => e.key === ' ' || e.key === 'Enter' ? setStartPoint('gate-a') : null}
                   >
-                    {startPoint === 'gate-a' && <circle cx="0" cy="-184" r="16" fill="#d946ef" fillOpacity="0.25" className="animate-ping" />}
-                    <path d="M 13 -176 L -13 -176 L -13 -192 L 13 -192 Z" fill={startPoint === 'gate-a' ? '#d946ef' : '#18181b'} stroke={gateQueueInfo['gate-a'].color} strokeWidth={startPoint === 'gate-a' ? '2.5' : '1.5'} />
-                    <text x="0" y="-184" textAnchor="middle" dominantBaseline="central" fontSize="10" fontWeight="900" fill="#ffffff">A</text>
+                    {startPoint === 'gate-a' && <circle cx="0" cy="-184" r="18" fill={gateQueueInfo['gate-a'].color} fillOpacity="0.25" className="animate-ping" />}
+                    <rect x="-14" y="-193" width="28" height="18" rx="4" fill={startPoint === 'gate-a' ? '#22c55e' : '#18181b'} stroke={gateQueueInfo['gate-a'].color} strokeWidth={startPoint === 'gate-a' ? '2.5' : '1.5'} style={{ filter: startPoint === 'gate-a' ? 'drop-shadow(0 0 5px #22c55e)' : 'none' }} />
+                    <text x="0" y="-184" textAnchor="middle" dominantBaseline="central" fontSize="9" fontWeight="900" fill="#ffffff">A</text>
                   </g>
 
-                  {/* Gate B (South-East) */}
+                  {/* Gate B (North-East) */}
                   <g 
                     onClick={() => setStartPoint('gate-b')}
                     className="cursor-pointer group outline-none"
@@ -780,9 +891,9 @@ Include specific landmarks or elevator locations in your response.`;
                     aria-label={`Select Gate B. queue is ${gateQueueInfo['gate-b'].percentage}% full`}
                     onKeyDown={(e) => e.key === ' ' || e.key === 'Enter' ? setStartPoint('gate-b') : null}
                   >
-                    {startPoint === 'gate-b' && <circle cx="130" cy="-130" r="16" fill="#d946ef" fillOpacity="0.25" className="animate-ping" />}
-                    <path d="M 133 -115 L 115 -133 L 126 -144 L 144 -126 Z" fill={startPoint === 'gate-b' ? '#d946ef' : '#18181b'} stroke={gateQueueInfo['gate-b'].color} strokeWidth={startPoint === 'gate-b' ? '2.5' : '1.5'} />
-                    <text x="130" y="-130" textAnchor="middle" dominantBaseline="central" fontSize="10" fontWeight="900" fill="#ffffff">B</text>
+                    {startPoint === 'gate-b' && <circle cx="130" cy="-130" r="18" fill={gateQueueInfo['gate-b'].color} fillOpacity="0.25" className="animate-ping" />}
+                    <rect x="116" y="-139" width="28" height="18" rx="4" fill={startPoint === 'gate-b' ? '#22c55e' : '#18181b'} stroke={gateQueueInfo['gate-b'].color} strokeWidth={startPoint === 'gate-b' ? '2.5' : '1.5'} style={{ filter: startPoint === 'gate-b' ? 'drop-shadow(0 0 5px #22c55e)' : 'none' }} />
+                    <text x="130" y="-130" textAnchor="middle" dominantBaseline="central" fontSize="9" fontWeight="900" fill="#ffffff">B</text>
                   </g>
 
                   {/* Gate C (East) */}
@@ -794,12 +905,12 @@ Include specific landmarks or elevator locations in your response.`;
                     aria-label={`Select Gate C. queue is ${gateQueueInfo['gate-c'].percentage}% full`}
                     onKeyDown={(e) => e.key === ' ' || e.key === 'Enter' ? setStartPoint('gate-c') : null}
                   >
-                    {startPoint === 'gate-c' && <circle cx="184" cy="0" r="16" fill="#d946ef" fillOpacity="0.25" className="animate-ping" />}
-                    <path d="M 176 13 L 176 -13 L 192 -13 L 192 13 Z" fill={startPoint === 'gate-c' ? '#d946ef' : '#18181b'} stroke={gateQueueInfo['gate-c'].color} strokeWidth={startPoint === 'gate-c' ? '2.5' : '1.5'} />
-                    <text x="184" y="0" textAnchor="middle" dominantBaseline="central" fontSize="10" fontWeight="900" fill="#ffffff">C</text>
+                    {startPoint === 'gate-c' && <circle cx="184" cy="0" r="18" fill={gateQueueInfo['gate-c'].color} fillOpacity="0.25" className="animate-ping" />}
+                    <rect x="170" y="-9" width="28" height="18" rx="4" fill={startPoint === 'gate-c' ? '#22c55e' : '#18181b'} stroke={gateQueueInfo['gate-c'].color} strokeWidth={startPoint === 'gate-c' ? '2.5' : '1.5'} style={{ filter: startPoint === 'gate-c' ? 'drop-shadow(0 0 5px #22c55e)' : 'none' }} />
+                    <text x="184" y="0" textAnchor="middle" dominantBaseline="central" fontSize="9" fontWeight="900" fill="#ffffff">C</text>
                   </g>
 
-                  {/* Gate D (South) */}
+                  {/* Gate D (South-East) */}
                   <g 
                     onClick={() => setStartPoint('gate-d')}
                     className="cursor-pointer group outline-none"
@@ -808,12 +919,12 @@ Include specific landmarks or elevator locations in your response.`;
                     aria-label={`Select Gate D. queue is ${gateQueueInfo['gate-d'].percentage}% full`}
                     onKeyDown={(e) => e.key === ' ' || e.key === 'Enter' ? setStartPoint('gate-d') : null}
                   >
-                    {startPoint === 'gate-d' && <circle cx="130" cy="130" r="16" fill="#d946ef" fillOpacity="0.25" className="animate-ping" />}
-                    <path d="M 115 133 L 133 115 L 144 126 L 126 144 Z" fill={startPoint === 'gate-d' ? '#d946ef' : '#18181b'} stroke={gateQueueInfo['gate-d'].color} strokeWidth={startPoint === 'gate-d' ? '2.5' : '1.5'} />
-                    <text x="130" y="130" textAnchor="middle" dominantBaseline="central" fontSize="10" fontWeight="900" fill="#ffffff">D</text>
+                    {startPoint === 'gate-d' && <circle cx="130" cy="130" r="18" fill={gateQueueInfo['gate-d'].color} fillOpacity="0.25" className="animate-ping" />}
+                    <rect x="116" y="121" width="28" height="18" rx="4" fill={startPoint === 'gate-d' ? '#22c55e' : '#18181b'} stroke={gateQueueInfo['gate-d'].color} strokeWidth={startPoint === 'gate-d' ? '2.5' : '1.5'} style={{ filter: startPoint === 'gate-d' ? 'drop-shadow(0 0 5px #22c55e)' : 'none' }} />
+                    <text x="130" y="130" textAnchor="middle" dominantBaseline="central" fontSize="9" fontWeight="900" fill="#ffffff">D</text>
                   </g>
 
-                  {/* Gate E (West) */}
+                  {/* Gate E (South) */}
                   <g 
                     onClick={() => setStartPoint('gate-e')}
                     className="cursor-pointer group outline-none"
@@ -822,12 +933,12 @@ Include specific landmarks or elevator locations in your response.`;
                     aria-label={`Select Gate E. queue is ${gateQueueInfo['gate-e'].percentage}% full`}
                     onKeyDown={(e) => e.key === ' ' || e.key === 'Enter' ? setStartPoint('gate-e') : null}
                   >
-                    {startPoint === 'gate-e' && <circle cx="0" cy="184" r="16" fill="#d946ef" fillOpacity="0.25" className="animate-ping" />}
-                    <path d="M -13 176 L 13 176 L 13 192 L -13 192 Z" fill={startPoint === 'gate-e' ? '#d946ef' : '#18181b'} stroke={gateQueueInfo['gate-e'].color} strokeWidth={startPoint === 'gate-e' ? '2.5' : '1.5'} />
-                    <text x="0" y="184" textAnchor="middle" dominantBaseline="central" fontSize="10" fontWeight="900" fill="#ffffff">E</text>
+                    {startPoint === 'gate-e' && <circle cx="0" cy="184" r="18" fill={gateQueueInfo['gate-e'].color} fillOpacity="0.25" className="animate-ping" />}
+                    <rect x="-14" y="175" width="28" height="18" rx="4" fill={startPoint === 'gate-e' ? '#22c55e' : '#18181b'} stroke={gateQueueInfo['gate-e'].color} strokeWidth={startPoint === 'gate-e' ? '2.5' : '1.5'} style={{ filter: startPoint === 'gate-e' ? 'drop-shadow(0 0 5px #22c55e)' : 'none' }} />
+                    <text x="0" y="184" textAnchor="middle" dominantBaseline="central" fontSize="9" fontWeight="900" fill="#ffffff">E</text>
                   </g>
 
-                  {/* Gate F (North-West) */}
+                  {/* Gate F (South-West) */}
                   <g 
                     onClick={() => setStartPoint('gate-f')}
                     className="cursor-pointer group outline-none"
@@ -836,12 +947,12 @@ Include specific landmarks or elevator locations in your response.`;
                     aria-label={`Select Gate F. queue is ${gateQueueInfo['gate-f'].percentage}% full`}
                     onKeyDown={(e) => e.key === ' ' || e.key === 'Enter' ? setStartPoint('gate-f') : null}
                   >
-                    {startPoint === 'gate-f' && <circle cx="-130" cy="130" r="16" fill="#d946ef" fillOpacity="0.25" className="animate-ping" />}
-                    <path d="M -133 115 L -115 133 L -126 144 L -144 126 Z" fill={startPoint === 'gate-f' ? '#d946ef' : '#18181b'} stroke={gateQueueInfo['gate-f'].color} strokeWidth={startPoint === 'gate-f' ? '2.5' : '1.5'} />
-                    <text x="-130" y="130" textAnchor="middle" dominantBaseline="central" fontSize="10" fontWeight="900" fill="#ffffff">F</text>
+                    {startPoint === 'gate-f' && <circle cx="-130" cy="130" r="18" fill={gateQueueInfo['gate-f'].color} fillOpacity="0.25" className="animate-ping" />}
+                    <rect x="-144" y="121" width="28" height="18" rx="4" fill={startPoint === 'gate-f' ? '#22c55e' : '#18181b'} stroke={gateQueueInfo['gate-f'].color} strokeWidth={startPoint === 'gate-f' ? '2.5' : '1.5'} style={{ filter: startPoint === 'gate-f' ? 'drop-shadow(0 0 5px #22c55e)' : 'none' }} />
+                    <text x="-130" y="130" textAnchor="middle" dominantBaseline="central" fontSize="9" fontWeight="900" fill="#ffffff">F</text>
                   </g>
 
-                  {/* Gate G (West-North) */}
+                  {/* Gate G (West) */}
                   <g 
                     onClick={() => setStartPoint('gate-g')}
                     className="cursor-pointer group outline-none"
@@ -850,12 +961,12 @@ Include specific landmarks or elevator locations in your response.`;
                     aria-label={`Select Gate G. queue is ${gateQueueInfo['gate-g'].percentage}% full`}
                     onKeyDown={(e) => e.key === ' ' || e.key === 'Enter' ? setStartPoint('gate-g') : null}
                   >
-                    {startPoint === 'gate-g' && <circle cx="-184" cy="0" r="16" fill="#d946ef" fillOpacity="0.25" className="animate-ping" />}
-                    <path d="M -176 -13 L -176 13 L -192 13 L -192 -13 Z" fill={startPoint === 'gate-g' ? '#d946ef' : '#18181b'} stroke={gateQueueInfo['gate-g'].color} strokeWidth={startPoint === 'gate-g' ? '2.5' : '1.5'} />
-                    <text x="-184" y="0" textAnchor="middle" dominantBaseline="central" fontSize="10" fontWeight="900" fill="#ffffff">G</text>
+                    {startPoint === 'gate-g' && <circle cx="-184" cy="0" r="18" fill={gateQueueInfo['gate-g'].color} fillOpacity="0.25" className="animate-ping" />}
+                    <rect x="-198" y="-9" width="28" height="18" rx="4" fill={startPoint === 'gate-g' ? '#22c55e' : '#18181b'} stroke={gateQueueInfo['gate-g'].color} strokeWidth={startPoint === 'gate-g' ? '2.5' : '1.5'} style={{ filter: startPoint === 'gate-g' ? 'drop-shadow(0 0 5px #22c55e)' : 'none' }} />
+                    <text x="-184" y="0" textAnchor="middle" dominantBaseline="central" fontSize="9" fontWeight="900" fill="#ffffff">G</text>
                   </g>
 
-                  {/* Gate H (North-East) */}
+                  {/* Gate H (North-West) */}
                   <g 
                     onClick={() => setStartPoint('gate-h')}
                     className="cursor-pointer group outline-none"
@@ -864,39 +975,85 @@ Include specific landmarks or elevator locations in your response.`;
                     aria-label={`Select Gate H. queue is ${gateQueueInfo['gate-h'].percentage}% full`}
                     onKeyDown={(e) => e.key === ' ' || e.key === 'Enter' ? setStartPoint('gate-h') : null}
                   >
-                    {startPoint === 'gate-h' && <circle cx="-130" cy="-130" r="16" fill="#d946ef" fillOpacity="0.25" className="animate-ping" />}
-                    <path d="M -115 -133 L -133 -115 L -144 -126 L -126 -144 Z" fill={startPoint === 'gate-h' ? '#d946ef' : '#18181b'} stroke={gateQueueInfo['gate-h'].color} strokeWidth={startPoint === 'gate-h' ? '2.5' : '1.5'} />
-                    <text x="-130" y="-130" textAnchor="middle" dominantBaseline="central" fontSize="10" fontWeight="900" fill="#ffffff">H</text>
+                    {startPoint === 'gate-h' && <circle cx="-130" cy="-130" r="18" fill={gateQueueInfo['gate-h'].color} fillOpacity="0.25" className="animate-ping" />}
+                    <rect x="-144" y="-139" width="28" height="18" rx="4" fill={startPoint === 'gate-h' ? '#22c55e' : '#18181b'} stroke={gateQueueInfo['gate-h'].color} strokeWidth={startPoint === 'gate-h' ? '2.5' : '1.5'} style={{ filter: startPoint === 'gate-h' ? 'drop-shadow(0 0 5px #22c55e)' : 'none' }} />
+                    <text x="-130" y="-130" textAnchor="middle" dominantBaseline="central" fontSize="9" fontWeight="900" fill="#ffffff">H</text>
                   </g>
                 </svg>
               </div>
 
-              {/* Legend (col-span-1) */}
-              <div className="space-y-4">
-                <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-extrabold uppercase tracking-widest block">
-                  Crowd level legend
-                </span>
-                
-                <div className="space-y-2.5">
-                  <div className="flex items-center gap-3">
-                    <span className="w-5 h-3.5 rounded bg-[#166534] inline-block shrink-0"></span>
-                    <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 font-mono">0-39% (Low delay)</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="w-5 h-3.5 rounded bg-[#a16207] inline-block shrink-0"></span>
-                    <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 font-mono">40-79% (Moderate wait)</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <span className="w-5 h-3.5 rounded bg-[#dc2626] inline-block shrink-0"></span>
-                    <span className="text-xs font-bold text-zinc-700 dark:text-zinc-300 font-mono">80%+ (Heavy bottleneck)</span>
+              {/* HUD / Telemetry Details sidebar */}
+              <div className="space-y-5">
+                <div>
+                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-extrabold uppercase tracking-widest block mb-1">
+                    Live Node Telemetry
+                  </span>
+                  
+                  {/* Selected Gate HUD Card */}
+                  <div className="bg-zinc-50 dark:bg-zinc-900 border border-zinc-150 dark:border-zinc-850 p-4 rounded-2xl space-y-3 shadow-sm">
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs font-black uppercase text-zinc-700 dark:text-zinc-200">
+                        {startPoint.toUpperCase().replace('-', ' ')}
+                      </span>
+                      <span className="text-[10px] bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-450 px-2 py-0.5 rounded font-black">
+                        ACTIVE
+                      </span>
+                    </div>
+
+                    <div className="space-y-1.5 text-xs text-zinc-650 dark:text-zinc-400 font-semibold">
+                      <div className="flex justify-between">
+                        <span>Congestion Status</span>
+                        <span className="font-mono text-zinc-900 dark:text-zinc-100">{gateQueueInfo[startPoint].percentage}% Full</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Wait Time</span>
+                        <span className="font-mono text-emerald-600 dark:text-emerald-450 font-black">{gateQueueInfo[startPoint].wait} mins</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Checkpoint Security</span>
+                        <span className="text-emerald-600 font-bold">Clear</span>
+                      </div>
+                    </div>
+
+                    {/* Congestion Color progress bar */}
+                    <div className="h-1.5 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full rounded-full" 
+                        style={{ 
+                          width: `${gateQueueInfo[startPoint].percentage}%`, 
+                          backgroundColor: gateQueueInfo[startPoint].color 
+                        }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
 
-                <div className="border-t border-zinc-150 dark:border-zinc-900 pt-3 text-[10px] text-zinc-500 dark:text-zinc-450 leading-relaxed font-semibold">
+                {/* Legend Indicators */}
+                <div className="space-y-2.5">
+                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500 font-extrabold uppercase tracking-widest block">
+                    Queue Legend
+                  </span>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-3">
+                      <span className="w-5 h-3.5 rounded-md bg-[#166534] inline-block shrink-0"></span>
+                      <span className="text-xs font-extrabold text-zinc-650 dark:text-zinc-350 font-mono">0-39% (Low delay)</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="w-5 h-3.5 rounded-md bg-[#a16207] inline-block shrink-0"></span>
+                      <span className="text-xs font-extrabold text-zinc-650 dark:text-zinc-350 font-mono">40-79% (Moderate wait)</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className="w-5 h-3.5 rounded-md bg-[#dc2626] inline-block shrink-0"></span>
+                      <span className="text-xs font-extrabold text-zinc-650 dark:text-zinc-350 font-mono">80%+ (Bottleneck)</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-zinc-150 dark:border-zinc-900 pt-3 text-[10px] text-zinc-550 dark:text-zinc-450 leading-relaxed font-medium">
                   Tapping gates dynamically modifies your start location and instantly recalibrates path directions. Alternate Gates are recommended if queues exceed 80%.
                 </div>
               </div>
-
             </div>
           </div>
         </div>

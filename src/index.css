@@ -209,3 +209,15 @@
   animation: leafFloat 3s infinite ease-in-out;
 }
 
+@keyframes routeFlow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+
+.route-flow-line {
+  stroke-dasharray: 6 4;
+  animation: routeFlow 1.2s linear infinite;
+}
+
+
