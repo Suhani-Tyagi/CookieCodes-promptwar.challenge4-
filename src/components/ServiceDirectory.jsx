@@ -302,7 +302,7 @@ export default function ServiceDirectory() {
     const isLive = settings?.apiMode === 'live';
     const apiKey = settings?.geminiApiKey;
 
-    const basePrompt = `You are "StadiumMate", the official AI wayfinding assistant for the FIFA World Cup 2026.
+    const basePrompt = `You are "ArenaAssist", the official AI wayfinding assistant for the FIFA World Cup 2026.
 Starting point: ${startingGate}
 Destination: ${destinationName}
 Ticket Section: ${ticketSection}
@@ -361,7 +361,7 @@ Include specific landmarks or elevator locations in your response.`;
           </div>
           <div>
             <h2 className="text-xl font-black tracking-tight flex items-center gap-2">
-              StadiumMate
+              ArenaAssist
               <span className="text-[10px] bg-emerald-700/80 px-2 py-0.5 rounded font-black tracking-widest uppercase">
                 A11y
               </span>

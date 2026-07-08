@@ -18,7 +18,8 @@ import {
   Shield,
   Clock,
   Compass,
-  Trophy
+  Trophy,
+  Utensils
 } from 'lucide-react';
 
 // Import Views
@@ -28,6 +29,7 @@ import ServiceDirectory from './components/ServiceDirectory.jsx';
 import IssueReporter from './components/IssueReporter.jsx';
 import SettingsPanel from './components/SettingsPanel.jsx';
 import MatchCenter from './components/MatchCenter.jsx';
+import ConcessionsPanel from './components/ConcessionsPanel.jsx';
 
 export default function App() {
   const { 
@@ -82,6 +84,7 @@ export default function App() {
     { id: 'scores', label: t('navScores') || "Match Center", icon: Trophy },
     { id: 'companion', label: t('navCompanion'), icon: Sparkles },
     { id: 'services', label: t('navServices'), icon: Map },
+    { id: 'food', label: t('navFood') || "Food & Drink", icon: Utensils },
     { id: 'complaints', label: t('navComplaints'), icon: AlertTriangle },
     { id: 'settings', label: t('navSettings'), icon: Settings },
   ];
@@ -467,6 +470,7 @@ export default function App() {
             {activeTab === 'scores' && <MatchCenter />}
             {activeTab === 'companion' && <SmartCompanion />}
             {activeTab === 'services' && <ServiceDirectory />}
+            {activeTab === 'food' && <ConcessionsPanel />}
             {activeTab === 'complaints' && <IssueReporter />}
             {activeTab === 'settings' && <SettingsPanel />}
           </main>
