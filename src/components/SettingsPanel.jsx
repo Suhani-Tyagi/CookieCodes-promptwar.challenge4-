@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext.jsx';
+import { maskSecret } from '../utils/sanitize.js';
 import { 
   Settings, 
   User, 
@@ -35,6 +36,8 @@ export default function SettingsPanel() {
 
   const [feedback, setFeedback] = useState('');
   const [showKeyInfo, setShowKeyInfo] = useState(false);
+  // Track whether the user has entered a new key in this session
+  const [keyEditing, setKeyEditing] = useState(false);
 
   const handleSaveProfile = (e) => {
     e.preventDefault();
@@ -77,8 +80,12 @@ export default function SettingsPanel() {
       </div>
 
       {feedback && (
-        <div className="p-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 rounded-xl text-emerald-800 dark:text-emerald-400 text-xs flex items-center gap-2 animate-fade-in font-bold">
-          <Check className="w-4 h-4" />
+        <div
+          role="status"
+          aria-live="polite"
+          className="p-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-100 dark:border-emerald-900/40 rounded-xl text-emerald-800 dark:text-emerald-400 text-xs flex items-center gap-2 animate-fade-in font-bold"
+        >
+          <Check className="w-4 h-4" aria-hidden="true" />
           <p>{feedback}</p>
         </div>
       )}
@@ -96,11 +103,13 @@ export default function SettingsPanel() {
             
             {/* Name */}
             <div className="flex flex-col">
-              <label className="text-zinc-500 mb-1">Full Name</label>
+              <label htmlFor="profile-name" className="text-zinc-500 mb-1">Full Name</label>
               <input
+                id="profile-name"
                 type="text"
                 value={profileName}
                 onChange={(e) => setProfileName(e.target.value)}
+                aria-label="Full Name"
                 className="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 text-zinc-850 dark:text-zinc-150 focus:outline-none font-medium"
               />
             </div>
@@ -108,10 +117,12 @@ export default function SettingsPanel() {
             <div className="grid grid-cols-2 gap-4">
               {/* Ticket Category */}
               <div className="flex flex-col">
-                <label className="text-zinc-500 mb-1">Ticket Category</label>
+                <label htmlFor="ticket-category" className="text-zinc-500 mb-1">Ticket Category</label>
                 <select
+                  id="ticket-category"
                   value={profileTicketCategory}
                   onChange={(e) => setProfileTicketCategory(e.target.value)}
+                  aria-label="Ticket Category"
                   className="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 text-zinc-850 dark:text-zinc-150 focus:outline-none"
                 >
                   <option value="Category 1 (Premium)">Category 1 (Premium)</option>
@@ -123,11 +134,13 @@ export default function SettingsPanel() {
 
               {/* Seat Location */}
               <div className="flex flex-col">
-                <label className="text-zinc-500 mb-1">Assigned Seat</label>
+                <label htmlFor="assigned-seat" className="text-zinc-500 mb-1">Assigned Seat</label>
                 <input
+                  id="assigned-seat"
                   type="text"
                   value={profileSeat}
                   onChange={(e) => setProfileSeat(e.target.value)}
+                  aria-label="Assigned Seat"
                   className="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 text-zinc-850 dark:text-zinc-150 focus:outline-none font-medium"
                 />
               </div>
@@ -136,10 +149,12 @@ export default function SettingsPanel() {
             <div className="grid grid-cols-2 gap-4">
               {/* Operational Role */}
               <div className="flex flex-col">
-                <label className="text-zinc-500 mb-1">User Role (Simulation)</label>
+                <label htmlFor="user-role" className="text-zinc-500 mb-1">User Role (Simulation)</label>
                 <select
+                  id="user-role"
                   value={profileRole}
                   onChange={(e) => setProfileRole(e.target.value)}
+                  aria-label="User Role (Simulation)"
                   className="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 text-zinc-850 dark:text-zinc-150 focus:outline-none"
                 >
                   <option value="Fan">Fan (Guest)</option>
@@ -151,10 +166,12 @@ export default function SettingsPanel() {
 
               {/* Language */}
               <div className="flex flex-col">
-                <label className="text-zinc-500 mb-1">Preferred Language</label>
+                <label htmlFor="preferred-lang" className="text-zinc-500 mb-1">Preferred Language</label>
                 <select
+                  id="preferred-lang"
                   value={profileLanguage}
                   onChange={(e) => setProfileLanguage(e.target.value)}
+                  aria-label="Preferred Language"
                   className="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 text-zinc-850 dark:text-zinc-150 focus:outline-none"
                 >
                   <option value="en">English</option>
@@ -221,10 +238,18 @@ export default function SettingsPanel() {
                 )}
 
                 <input
-                  type="password"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
+                  id="gemini-api-key"
+                  type={keyEditing ? 'text' : 'password'}
+                  value={keyEditing ? apiKey : (apiKey ? maskSecret(apiKey) : '')}
+                  onChange={(e) => {
+                    setKeyEditing(true);
+                    setApiKey(e.target.value);
+                  }}
+                  onFocus={() => setKeyEditing(true)}
+                  onBlur={() => setKeyEditing(false)}
                   placeholder={t('apiKeyPlaceholder')}
+                  aria-label="Gemini API Key"
+                  aria-describedby="api-key-hint"
                   className="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 text-zinc-850 dark:text-zinc-150 focus:outline-none font-medium font-mono"
                 />
               </div>

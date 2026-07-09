@@ -68,26 +68,8 @@ function MatchHeroVisualizer({ match, onToggleLive, liveActive }) {
   return (
     <div className="relative w-full rounded-3xl overflow-hidden border border-zinc-800 bg-[#060608] shadow-2xl h-[380px] sm:h-[450px] flex flex-col justify-between p-6 sm:p-8 transition-all duration-500">
       
-      {/* Inject custom CSS keyframes for floating sparks and slides */}
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes floatSpark {
-          0% { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0; }
-          40% { opacity: 0.8; }
-          100% { transform: translateY(-240px) scale(0.3) rotate(180deg); opacity: 0; }
-        }
-        @keyframes slideInLeftHero {
-          from { transform: translateX(-50px) scale(0.92); opacity: 0; }
-          to { transform: translateX(0) scale(1); opacity: 1; }
-        }
-        @keyframes slideInRightHero {
-          from { transform: translateX(50px) scale(0.92); opacity: 0; }
-          to { transform: translateX(0) scale(1); opacity: 1; }
-        }
-        @keyframes pulseGlowVS {
-          0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(244,63,94,0.6)); }
-          50% { transform: scale(1.08); filter: drop-shadow(0 0 15px rgba(244,63,94,0.9)); }
-        }
-      `}} />
+      {/* Note: Match hero keyframe animations are defined in index.css (floatSpark, slideInLeftHero, slideInRightHero, pulseGlowVS) */}
+
 
       {/* Dynamic split smoke gradients (rivalry backgrounds) */}
       <div className="absolute inset-0 pointer-events-none z-0 flex">

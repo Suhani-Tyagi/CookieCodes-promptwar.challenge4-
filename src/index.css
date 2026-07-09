@@ -284,5 +284,69 @@
   background-color: #047857; /* emerald-700 */
 }
 
+/* ============================================================
+   Match Hero Card Keyframes
+   (Moved from dangerouslySetInnerHTML for security — CSP safe)
+   ============================================================ */
+@keyframes floatSpark {
+  0% { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0; }
+  40% { opacity: 0.8; }
+  100% { transform: translateY(-240px) scale(0.3) rotate(180deg); opacity: 0; }
+}
+
+@keyframes slideInLeftHero {
+  from { transform: translateX(-50px) scale(0.92); opacity: 0; }
+  to { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+@keyframes slideInRightHero {
+  from { transform: translateX(50px) scale(0.92); opacity: 0; }
+  to { transform: translateX(0) scale(1); opacity: 1; }
+}
+
+@keyframes pulseGlowVS {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(244,63,94,0.6)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 15px rgba(244,63,94,0.9)); }
+}
+
+/* ============================================================
+   Accessibility — Focus Visible Styles (WCAG 2.4.7)
+   Ensures all interactive elements have a visible keyboard focus ring
+   ============================================================ */
+:focus-visible {
+  outline: 2px solid #10b981;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Remove outline for mouse users only */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Screen Reader Only utility (complements Tailwind sr-only) */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* High-contrast interactive states for WCAG AA compliance */
+.btn-accessible {
+  @apply focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-900;
+}
+
+/* Live region styling */
+[aria-live] {
+  min-height: 1px;
+}
+
+
 
 
