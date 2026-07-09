@@ -49,7 +49,7 @@ const menuData = {
   "stand-n-3": [
     { id: "salad", name: "Avocado Quinoa Energy Salad", price: 12, isVeg: true, isVegan: true, details: "Fluffy quinoa, sliced avocado, organic greens, light vinaigrette", image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=350&q=80" },
     { id: "wrap", name: "Hummus Veggie Crunch Wrap", price: 11, isVeg: true, isVegan: true, details: "Hummus, Persian cucumbers, bell peppers, spinach, tortilla wrap", image: "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?auto=format&fit=crop&w=350&q=80" },
-    { id: "chips", name: "Sweet Potato Baked Crisps", price: 6, isVeg: true, isVegan: true, details: "Kettle-cooked sweet potato chips with pink salt", image: "https://images.unsplash.com/photo-1518047601542-79f18c655718?auto=format&fit=crop&w=350&q=80" },
+    { id: "chips", name: "Sweet Potato Baked Crisps", price: 6, isVeg: true, isVegan: true, details: "Kettle-cooked sweet potato chips with pink salt", image: "https://images.unsplash.com/photo-1585109649139-366815a0d713?auto=format&fit=crop&w=350&q=80" },
     { id: "water", name: "Organic Coconut Water", price: 5, isVeg: true, isVegan: true, details: "Pure organic coconut hydration water", image: "https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=350&q=80" }
   ],
   "stand-e-1": [
