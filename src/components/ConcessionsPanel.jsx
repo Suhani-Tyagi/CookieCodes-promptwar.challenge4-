@@ -35,40 +35,40 @@ const mockStands = [
 
 const menuData = {
   "stand-n-1": [
-    { id: "burg", name: "Classic Arena Burger", price: 14, isVeg: false, isVegan: false, details: "Premium beef patty, cheddar, secret Arena sauce on brioche" },
-    { id: "tend", name: "Crispy Chicken Tenders", price: 12, isVeg: false, isVegan: false, details: "Golden crispy tenders served with honey-drizzle mustard" },
-    { id: "fries", name: "Loaded Truffle Fries", price: 9, isVeg: true, isVegan: false, details: "Thin-cut fries smothered in warm cheese sauce & fresh chives" },
-    { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup" }
+    { id: "burg", name: "Classic Arena Burger", price: 14, isVeg: false, isVegan: false, details: "Premium beef patty, cheddar, secret Arena sauce on brioche", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=350&q=80" },
+    { id: "tend", name: "Crispy Chicken Tenders", price: 12, isVeg: false, isVegan: false, details: "Golden crispy tenders served with honey-drizzle mustard", image: "https://images.unsplash.com/photo-1562967914-6c8273972a50?auto=format&fit=crop&w=350&q=80" },
+    { id: "fries", name: "Loaded Truffle Fries", price: 9, isVeg: true, isVegan: false, details: "Thin-cut fries smothered in warm cheese sauce & fresh chives", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=350&q=80" },
+    { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=350&q=80" }
   ],
   "stand-n-2": [
-    { id: "gyro", name: "Flame-Broiled Chicken Gyro", price: 13, isVeg: false, isVegan: false, details: "Spiced halal chicken, crisp lettuce, red onions, house tzatziki wrap" },
-    { id: "fal", name: "Golden Falafel Platter", price: 11, isVeg: true, isVegan: true, details: "Crisp falafel balls served with cream tahini, hummus and pita" },
-    { id: "hum", name: "Hummus Bowl & Crispy Pita", price: 7, isVeg: true, isVegan: true, details: "Creamy garlic hummus garnished with olives and olive oil" },
-    { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup" }
+    { id: "gyro", name: "Flame-Broiled Chicken Gyro", price: 13, isVeg: false, isVegan: false, details: "Spiced halal chicken, crisp lettuce, red onions, house tzatziki wrap", image: "https://images.unsplash.com/photo-1623341214825-9f4f963727da?auto=format&fit=crop&w=350&q=80" },
+    { id: "fal", name: "Golden Falafel Platter", price: 11, isVeg: true, isVegan: true, details: "Crisp falafel balls served with cream tahini, hummus and pita", image: "https://images.unsplash.com/photo-1547058886-af77993d452b?auto=format&fit=crop&w=350&q=80" },
+    { id: "hum", name: "Hummus Bowl & Crispy Pita", price: 7, isVeg: true, isVegan: true, details: "Creamy garlic hummus garnished with olives and olive oil", image: "https://images.unsplash.com/photo-1577906096429-f73c2c312435?auto=format&fit=crop&w=350&q=80" },
+    { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=350&q=80" }
   ],
   "stand-n-3": [
-    { id: "salad", name: "Avocado Quinoa Energy Salad", price: 12, isVeg: true, isVegan: true, details: "Fluffy quinoa, sliced avocado, organic greens, light vinaigrette" },
-    { id: "wrap", name: "Hummus Veggie Crunch Wrap", price: 11, isVeg: true, isVegan: true, details: "Hummus, Persian cucumbers, bell peppers, spinach, tortilla wrap" },
-    { id: "chips", name: "Sweet Potato Baked Crisps", price: 6, isVeg: true, isVegan: true, details: "Kettle-cooked sweet potato chips with pink salt" },
-    { id: "water", name: "Organic Coconut Water", price: 5, isVeg: true, isVegan: true, details: "Pure organic coconut hydration water" }
+    { id: "salad", name: "Avocado Quinoa Energy Salad", price: 12, isVeg: true, isVegan: true, details: "Fluffy quinoa, sliced avocado, organic greens, light vinaigrette", image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=350&q=80" },
+    { id: "wrap", name: "Hummus Veggie Crunch Wrap", price: 11, isVeg: true, isVegan: true, details: "Hummus, Persian cucumbers, bell peppers, spinach, tortilla wrap", image: "https://images.unsplash.com/photo-1626700051175-6518c4793f4f?auto=format&fit=crop&w=350&q=80" },
+    { id: "chips", name: "Sweet Potato Baked Crisps", price: 6, isVeg: true, isVegan: true, details: "Kettle-cooked sweet potato chips with pink salt", image: "https://images.unsplash.com/photo-1566478989037-eec170784d20?auto=format&fit=crop&w=350&q=80" },
+    { id: "water", name: "Organic Coconut Water", price: 5, isVeg: true, isVegan: true, details: "Pure organic coconut hydration water", image: "https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=350&q=80" }
   ],
   "stand-e-1": [
-    { id: "pep", name: "Pepperoni Artisan Slice", price: 8, isVeg: false, isVegan: false, details: "Stone-baked thin crust pizza with cured beef pepperoni" },
-    { id: "chz", name: "MetLife Cheese Slice", price: 7, isVeg: true, isVegan: false, details: "Bubbling double-mozzarella cheese over rich tomato marinara" },
-    { id: "garlic", name: "Garlic Butter Knots (4x)", price: 6, isVeg: true, isVegan: false, details: "Baked dough knots brushed with garlic olive oil and parsley" },
-    { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup" }
+    { id: "pep", name: "Pepperoni Artisan Slice", price: 8, isVeg: false, isVegan: false, details: "Stone-baked thin crust pizza with cured beef pepperoni", image: "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=350&q=80" },
+    { id: "chz", name: "MetLife Cheese Slice", price: 7, isVeg: true, isVegan: false, details: "Bubbling double-mozzarella cheese over rich tomato marinara", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=350&q=80" },
+    { id: "garlic", name: "Garlic Butter Knots (4x)", price: 6, isVeg: true, isVegan: false, details: "Baked dough knots brushed with garlic olive oil and parsley", image: "https://images.unsplash.com/photo-1619535860434-ba1d8fa12536?auto=format&fit=crop&w=350&q=80" },
+    { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=350&q=80" }
   ],
   "stand-s-1": [
-    { id: "burg", name: "Classic Arena Burger", price: 14, isVeg: false, isVegan: false, details: "Premium beef patty, cheddar, secret Arena sauce on brioche" },
-    { id: "tend", name: "Crispy Chicken Tenders", price: 12, isVeg: false, isVegan: false, details: "Golden crispy tenders served with honey-drizzle mustard" },
-    { id: "fries", name: "Loaded Truffle Fries", price: 9, isVeg: true, isVegan: false, details: "Thin-cut fries smothered in warm cheese sauce & fresh chives" },
-    { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup" }
+    { id: "pork", name: "Arena BBQ Pulled Pork Sandwich", price: 15, isVeg: false, isVegan: false, details: "Slow-smoked pork shoulder, home BBQ glaze on soft brioche", image: "https://images.unsplash.com/photo-1527751171053-6ac5ec50000b?auto=format&fit=crop&w=350&q=80" },
+    { id: "brisket", name: "Smoked Beef Brisket Platter", price: 18, isVeg: false, isVegan: false, details: "Oak-smoked beef brisket brisket slices served with BBQ dipping sauce", image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=350&q=80" },
+    { id: "mac", name: "Arena Smoked Mac & Cheese", price: 10, isVeg: true, isVegan: false, details: "Creamy three-cheese macaroni baked with a hickory-smoke crust", image: "https://images.unsplash.com/photo-1543339494-b4cd4f7ba686?auto=format&fit=crop&w=350&q=80" },
+    { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=350&q=80" }
   ],
   "stand-w-1": [
-    { id: "latte", name: "Arena Iced Latte", price: 7, isVeg: true, isVegan: false, details: "Double espresso shot over milk and ice" },
-    { id: "pretzel", name: "Giant Warm Pretzel", price: 8, isVeg: true, isVegan: false, details: "Traditional salted Bavarian pretzel served with cheese dip" },
-    { id: "cookie", name: "Fudge Chunk Cookie", price: 4, isVeg: true, isVegan: false, details: "Soft-baked chocolate chip cookie served warm" },
-    { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup" }
+    { id: "latte", name: "Arena Iced Latte", price: 7, isVeg: true, isVegan: false, details: "Double espresso shot over milk and ice", image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?auto=format&fit=crop&w=350&q=80" },
+    { id: "pretzel", name: "Giant Warm Pretzel", price: 8, isVeg: true, isVegan: false, details: "Traditional salted Bavarian pretzel served with cheese dip", image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=350&q=80" },
+    { id: "cookie", name: "Fudge Chunk Cookie", price: 4, isVeg: true, isVegan: false, details: "Soft-baked chocolate chip cookie served warm", image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?auto=format&fit=crop&w=350&q=80" },
+    { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=350&q=80" }
   ]
 };
 
@@ -260,43 +260,54 @@ export default function ConcessionsPanel() {
             {activeMenu.map((item) => (
               <div 
                 key={item.id} 
-                className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 p-4.5 rounded-2xl shadow-sm flex flex-col justify-between hover:border-zinc-350 dark:hover:border-zinc-700 hover:-translate-y-0.5 transition-all duration-300 gap-4"
+                className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm flex flex-col hover:border-emerald-500/50 dark:hover:border-emerald-500/50 hover:-translate-y-1 transition-all duration-300 overflow-hidden"
               >
-                <div className="space-y-2">
-                  <div className="flex justify-between items-start gap-2">
-                    <h4 className="font-extrabold text-sm text-zinc-850 dark:text-zinc-150">
-                      {item.name}
-                    </h4>
-                    <span className="font-mono text-xs font-black text-emerald-600 dark:text-emerald-450 shrink-0">
-                      ${item.price.toFixed(2)}
-                    </span>
-                  </div>
-                  <p className="text-xs text-zinc-500 dark:text-zinc-400 font-medium leading-relaxed">
-                    {item.details}
-                  </p>
-                </div>
-
-                <div className="flex justify-between items-center">
-                  <div className="flex gap-1.5">
+                {/* Food Image Header */}
+                <div className="h-32 w-full relative overflow-hidden bg-zinc-150 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800">
+                  <img 
+                    src={item.image} 
+                    alt={item.name} 
+                    className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                  />
+                  {/* Vegetarian/Vegan Badges Overlay */}
+                  <div className="absolute top-2 left-2 flex gap-1">
                     {item.isVeg && (
-                      <span className="text-[9px] font-black text-emerald-650 bg-emerald-50 dark:bg-emerald-950/20 px-2 py-0.5 rounded-full border border-emerald-550/20">
-                        Vegetarian
+                      <span className="text-[9px] font-black text-emerald-800 bg-emerald-100/90 dark:bg-emerald-950/90 dark:text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/20 backdrop-blur-sm shadow-sm">
+                        Veg
                       </span>
                     )}
                     {item.isVegan && (
-                      <span className="text-[9px] font-black text-emerald-650 bg-emerald-50 dark:bg-emerald-950/20 px-2 py-0.5 rounded-full border border-emerald-550/20">
+                      <span className="text-[9px] font-black text-teal-800 bg-teal-100/90 dark:bg-teal-950/90 dark:text-teal-400 px-2 py-0.5 rounded-full border border-teal-500/20 backdrop-blur-sm shadow-sm">
                         Vegan
                       </span>
                     )}
                   </div>
+                </div>
 
-                  <button
-                    onClick={() => addToCart(item)}
-                    className="bg-zinc-900 hover:bg-zinc-800 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-white font-bold p-1.5 rounded-lg transition-colors flex items-center justify-center shadow"
-                    aria-label={`Add ${item.name} to order`}
-                  >
-                    <Plus className="w-4 h-4" />
-                  </button>
+                <div className="p-4.5 flex-1 flex flex-col justify-between gap-3">
+                  <div className="space-y-1">
+                    <div className="flex justify-between items-start gap-2">
+                      <h4 className="font-extrabold text-xs text-zinc-900 dark:text-zinc-150 leading-snug">
+                        {item.name}
+                      </h4>
+                      <span className="font-mono text-xs font-black text-emerald-600 dark:text-emerald-450 shrink-0">
+                        ${item.price.toFixed(2)}
+                      </span>
+                    </div>
+                    <p className="text-[10px] text-zinc-450 dark:text-zinc-500 font-bold leading-normal">
+                      {item.details}
+                    </p>
+                  </div>
+
+                  <div className="flex justify-end items-center">
+                    <button
+                      onClick={() => addToCart(item)}
+                      className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold p-1.5 rounded-lg transition-colors flex items-center justify-center shadow-sm w-8 h-8"
+                      aria-label={`Add ${item.name} to order`}
+                    >
+                      <Plus className="w-4.5 h-4.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
