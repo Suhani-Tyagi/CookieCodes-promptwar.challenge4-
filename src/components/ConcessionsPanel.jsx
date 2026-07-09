@@ -42,20 +42,20 @@ const menuData = {
   ],
   "stand-n-2": [
     { id: "gyro", name: "Flame-Broiled Chicken Gyro", price: 13, isVeg: false, isVegan: false, details: "Spiced halal chicken, crisp lettuce, red onions, house tzatziki wrap", image: "https://images.unsplash.com/photo-1623341214825-9f4f963727da?auto=format&fit=crop&w=350&q=80" },
-    { id: "fal", name: "Golden Falafel Platter", price: 11, isVeg: true, isVegan: true, details: "Crisp falafel balls served with cream tahini, hummus and pita", image: "https://images.unsplash.com/photo-1547058886-af77993d452b?auto=format&fit=crop&w=350&q=80" },
+    { id: "fal", name: "Golden Falafel Platter", price: 11, isVeg: true, isVegan: true, details: "Crisp falafel balls served with cream tahini, hummus and pita", image: "https://images.unsplash.com/photo-1593001874117-1f9dbd675e27?auto=format&fit=crop&w=350&q=80" },
     { id: "hum", name: "Hummus Bowl & Crispy Pita", price: 7, isVeg: true, isVegan: true, details: "Creamy garlic hummus garnished with olives and olive oil", image: "https://images.unsplash.com/photo-1577906096429-f73c2c312435?auto=format&fit=crop&w=350&q=80" },
     { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=350&q=80" }
   ],
   "stand-n-3": [
     { id: "salad", name: "Avocado Quinoa Energy Salad", price: 12, isVeg: true, isVegan: true, details: "Fluffy quinoa, sliced avocado, organic greens, light vinaigrette", image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=350&q=80" },
-    { id: "wrap", name: "Hummus Veggie Crunch Wrap", price: 11, isVeg: true, isVegan: true, details: "Hummus, Persian cucumbers, bell peppers, spinach, tortilla wrap", image: "https://images.unsplash.com/photo-1626700051175-6518c4793f4f?auto=format&fit=crop&w=350&q=80" },
-    { id: "chips", name: "Sweet Potato Baked Crisps", price: 6, isVeg: true, isVegan: true, details: "Kettle-cooked sweet potato chips with pink salt", image: "https://images.unsplash.com/photo-1566478989037-eec170784d20?auto=format&fit=crop&w=350&q=80" },
+    { id: "wrap", name: "Hummus Veggie Crunch Wrap", price: 11, isVeg: true, isVegan: true, details: "Hummus, Persian cucumbers, bell peppers, spinach, tortilla wrap", image: "https://images.unsplash.com/photo-1562059390-a761a0847685?auto=format&fit=crop&w=350&q=80" },
+    { id: "chips", name: "Sweet Potato Baked Crisps", price: 6, isVeg: true, isVegan: true, details: "Kettle-cooked sweet potato chips with pink salt", image: "https://images.unsplash.com/photo-1613967193442-19cfb7705151?auto=format&fit=crop&w=350&q=80" },
     { id: "water", name: "Organic Coconut Water", price: 5, isVeg: true, isVegan: true, details: "Pure organic coconut hydration water", image: "https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=350&q=80" }
   ],
   "stand-e-1": [
     { id: "pep", name: "Pepperoni Artisan Slice", price: 8, isVeg: false, isVegan: false, details: "Stone-baked thin crust pizza with cured beef pepperoni", image: "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=350&q=80" },
     { id: "chz", name: "MetLife Cheese Slice", price: 7, isVeg: true, isVegan: false, details: "Bubbling double-mozzarella cheese over rich tomato marinara", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=350&q=80" },
-    { id: "garlic", name: "Garlic Butter Knots (4x)", price: 6, isVeg: true, isVegan: false, details: "Baked dough knots brushed with garlic olive oil and parsley", image: "https://images.unsplash.com/photo-1619535860434-ba1d8fa12536?auto=format&fit=crop&w=350&q=80" },
+    { id: "garlic", name: "Garlic Butter Knots (4x)", price: 6, isVeg: true, isVegan: false, details: "Baked dough knots brushed with garlic olive oil and parsley", image: "https://images.unsplash.com/photo-1544982503-9f984c14501a?auto=format&fit=crop&w=350&q=80" },
     { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=350&q=80" }
   ],
   "stand-s-1": [
