@@ -42,14 +42,14 @@ const menuData = {
   ],
   "stand-n-2": [
     { id: "gyro", name: "Flame-Broiled Chicken Gyro", price: 13, isVeg: false, isVegan: false, details: "Spiced halal chicken, crisp lettuce, red onions, house tzatziki wrap", image: "https://images.unsplash.com/photo-1623341214825-9f4f963727da?auto=format&fit=crop&w=350&q=80" },
-    { id: "fal", name: "Golden Falafel Platter", price: 11, isVeg: true, isVegan: true, details: "Crisp falafel balls served with cream tahini, hummus and pita", image: "https://images.unsplash.com/photo-1593001874117-1f9dbd675e27?auto=format&fit=crop&w=350&q=80" },
+    { id: "fal", name: "Golden Falafel Platter", price: 11, isVeg: true, isVegan: true, details: "Crisp falafel balls served with cream tahini, hummus and pita", image: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?auto=format&fit=crop&w=350&q=80" },
     { id: "hum", name: "Hummus Bowl & Crispy Pita", price: 7, isVeg: true, isVegan: true, details: "Creamy garlic hummus garnished with olives and olive oil", image: "https://images.unsplash.com/photo-1577906096429-f73c2c312435?auto=format&fit=crop&w=350&q=80" },
     { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=350&q=80" }
   ],
   "stand-n-3": [
     { id: "salad", name: "Avocado Quinoa Energy Salad", price: 12, isVeg: true, isVegan: true, details: "Fluffy quinoa, sliced avocado, organic greens, light vinaigrette", image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=350&q=80" },
-    { id: "wrap", name: "Hummus Veggie Crunch Wrap", price: 11, isVeg: true, isVegan: true, details: "Hummus, Persian cucumbers, bell peppers, spinach, tortilla wrap", image: "https://images.unsplash.com/photo-1562059390-a761a0847685?auto=format&fit=crop&w=350&q=80" },
-    { id: "chips", name: "Sweet Potato Baked Crisps", price: 6, isVeg: true, isVegan: true, details: "Kettle-cooked sweet potato chips with pink salt", image: "https://images.unsplash.com/photo-1613967193442-19cfb7705151?auto=format&fit=crop&w=350&q=80" },
+    { id: "wrap", name: "Hummus Veggie Crunch Wrap", price: 11, isVeg: true, isVegan: true, details: "Hummus, Persian cucumbers, bell peppers, spinach, tortilla wrap", image: "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?auto=format&fit=crop&w=350&q=80" },
+    { id: "chips", name: "Sweet Potato Baked Crisps", price: 6, isVeg: true, isVegan: true, details: "Kettle-cooked sweet potato chips with pink salt", image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=350&q=80" },
     { id: "water", name: "Organic Coconut Water", price: 5, isVeg: true, isVegan: true, details: "Pure organic coconut hydration water", image: "https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=350&q=80" }
   ],
   "stand-e-1": [
@@ -267,6 +267,10 @@ export default function ConcessionsPanel() {
                   <img 
                     src={item.image} 
                     alt={item.name} 
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=350&q=80";
+                    }}
                     className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                   />
                   {/* Vegetarian/Vegan Badges Overlay */}
