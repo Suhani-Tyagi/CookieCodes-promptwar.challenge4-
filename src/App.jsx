@@ -30,6 +30,56 @@ import IssueReporter from './components/IssueReporter.jsx';
 import SettingsPanel from './components/SettingsPanel.jsx';
 import MatchCenter from './components/MatchCenter.jsx';
 import ConcessionsPanel from './components/ConcessionsPanel.jsx';
+import StorylineSimulator from './components/StorylineSimulator.jsx';
+import { 
+  VolunteerDashboard, 
+  OperationsDashboard, 
+  SecurityDashboard, 
+  MedicalDashboard, 
+  AdminDashboard 
+} from './components/RoleDashboards.jsx';
+
+function ControlRoomView() {
+  const [activeConsole, setActiveConsole] = useState('operations');
+
+  const consoles = [
+    { id: 'operations', label: 'Operations Command' },
+    { id: 'security', label: 'Security Force' },
+    { id: 'medical', label: 'First Aid & Medical' },
+    { id: 'volunteer', label: 'Volunteer Duty' },
+    { id: 'admin', label: 'System Diagnostics' }
+  ];
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <StorylineSimulator />
+
+      <div className="flex flex-wrap bg-zinc-950/80 border border-zinc-800/80 rounded-xl p-1 gap-1 text-[10px] font-black w-fit">
+        {consoles.map((c) => (
+          <button
+            key={c.id}
+            onClick={() => setActiveConsole(c.id)}
+            className={`px-4 py-2 rounded-lg transition-all uppercase tracking-wider ${
+              activeConsole === c.id 
+                ? 'bg-emerald-600 text-white shadow-md' 
+                : 'text-zinc-400 hover:text-zinc-200'
+            }`}
+          >
+            {c.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="transition-all duration-300">
+        {activeConsole === 'operations' && <OperationsDashboard />}
+        {activeConsole === 'security' && <SecurityDashboard />}
+        {activeConsole === 'medical' && <MedicalDashboard />}
+        {activeConsole === 'volunteer' && <VolunteerDashboard />}
+        {activeConsole === 'admin' && <AdminDashboard />}
+      </div>
+    </div>
+  );
+}
 
 export default function App() {
   const { 
@@ -81,6 +131,7 @@ export default function App() {
 
   const navItems = [
     { id: 'dashboard', label: t('navDashboard'), icon: LayoutDashboard },
+    { id: 'controlroom', label: "Operations Control", icon: Shield },
     { id: 'scores', label: t('navScores') || "Match Center", icon: Trophy },
     { id: 'companion', label: t('navCompanion'), icon: Sparkles },
     { id: 'services', label: t('navServices'), icon: Map },
@@ -159,7 +210,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-50 dark:bg-[#09090b] text-zinc-950 dark:text-zinc-50 transition-colors duration-300 font-sans">
+    <div className={`min-h-screen flex flex-col bg-zinc-50 ${activeTab === 'controlroom' ? 'dark:immersive-stadium-bg' : 'dark:bg-[#09090b]'} text-zinc-950 dark:text-zinc-50 transition-all duration-500 font-sans`}>
       
       {/* Dynamic Jersey-themed colored header strip */}
       <div style={dynamicStripeStyle} className="shrink-0 transition-all duration-700"></div>
@@ -467,6 +518,7 @@ export default function App() {
           {/* Tab View Router */}
           <main className="flex-1 overflow-y-auto p-4 md:p-8 max-w-[1600px] w-full mx-auto animate-fade-in">
             {activeTab === 'dashboard' && <DashboardHome />}
+            {activeTab === 'controlroom' && <ControlRoomView />}
             {activeTab === 'scores' && <MatchCenter />}
             {activeTab === 'companion' && <SmartCompanion />}
             {activeTab === 'services' && <ServiceDirectory />}

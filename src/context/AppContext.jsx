@@ -810,6 +810,192 @@ export const AppProvider = ({ children }) => {
     }));
   };
 
+  // Live Storyline Simulator States
+  const [simulatorAct, setSimulatorAct] = useState(1);
+  const [telemetry, setTelemetry] = useState({
+    gateCWait: 2,
+    gateDWait: 3,
+    gateBWait: 5,
+    activeVisitors: 12000,
+    heatmapSpots: [{ x: 380, y: 180, intensity: 0.3, label: 'Gate C' }],
+    routingPath: null,
+    volunteerTasks: [
+      { id: 'task-1', title: 'Monitor Gate C Turnstiles', status: 'Pending', priority: 'Medium' }
+    ],
+    medicalTriage: [],
+    securityIncidents: [],
+    droneStatus: 'Stationary',
+    droneReport: ''
+  });
+
+  const triggerSimulatorAct = (actNum) => {
+    setSimulatorAct(actNum);
+    const newNotiId = `noti-sim-${actNum}-${Date.now()}`;
+    
+    let nextTelemetry = {};
+    let notiText = "";
+
+    switch (actNum) {
+      case 1:
+        nextTelemetry = {
+          gateCWait: 2,
+          gateDWait: 3,
+          gateBWait: 5,
+          activeVisitors: 12000,
+          heatmapSpots: [{ x: 380, y: 180, intensity: 0.3, label: 'Gate C' }],
+          routingPath: null,
+          volunteerTasks: [{ id: 'task-1', title: 'Monitor Gate C Turnstiles', status: 'Pending', priority: 'Medium' }],
+          medicalTriage: [],
+          securityIncidents: [],
+          droneStatus: 'Stationary',
+          droneReport: ''
+        };
+        notiText = "Act 1: Stadium Gates open. Ingress commenced for fans.";
+        break;
+      case 2:
+        nextTelemetry = {
+          gateCWait: 25,
+          gateDWait: 4,
+          gateBWait: 6,
+          activeVisitors: 34000,
+          heatmapSpots: [{ x: 380, y: 180, intensity: 0.9, label: 'Gate C Bottleneck' }],
+          routingPath: null,
+          volunteerTasks: [{ id: 'task-1', title: 'Assist turnstile triage at Gate C', status: 'Pending', priority: 'High' }],
+          medicalTriage: [],
+          securityIncidents: [],
+          droneStatus: 'Stationary',
+          droneReport: ''
+        };
+        notiText = "Act 2: Congestion peak at Gate C Turnstiles. Scanners throttling!";
+        break;
+      case 3:
+        nextTelemetry = {
+          gateCWait: 12,
+          gateDWait: 9,
+          gateBWait: 7,
+          activeVisitors: 42000,
+          heatmapSpots: [{ x: 380, y: 180, intensity: 0.6, label: 'Gate C' }, { x: 517, y: 189, intensity: 0.5, label: 'Gate D' }],
+          routingPath: [{ x: 380, y: 180 }, { x: 450, y: 140 }, { x: 517, y: 189 }],
+          volunteerTasks: [{ id: 'task-1', title: 'Assist turnstile triage at Gate C', status: 'In Progress', priority: 'High' }],
+          medicalTriage: [],
+          securityIncidents: [],
+          droneStatus: 'Stationary',
+          droneReport: ''
+        };
+        notiText = "Act 3: AI Companion rerouted 4,500 incoming fans to Gate D.";
+        break;
+      case 4:
+        nextTelemetry = {
+          gateCWait: 5,
+          gateDWait: 5,
+          gateBWait: 5,
+          activeVisitors: 58000,
+          heatmapSpots: [{ x: 380, y: 180, intensity: 0.2 }, { x: 517, y: 189, intensity: 0.2 }],
+          routingPath: null,
+          volunteerTasks: [{ id: 'task-1', title: 'Assist turnstile triage at Gate C', status: 'Completed', priority: 'High' }, { id: 'task-2', title: 'Replenish Eco-Cup supplies at Stand 2', status: 'Pending', priority: 'Low' }],
+          medicalTriage: [],
+          securityIncidents: [],
+          droneStatus: 'Stationary',
+          droneReport: ''
+        };
+        notiText = "Act 4: Volunteers deployed successfully. Gate C flow back to normal.";
+        break;
+      case 5:
+        nextTelemetry = {
+          gateCWait: 3,
+          gateDWait: 3,
+          gateBWait: 4,
+          activeVisitors: 68000,
+          heatmapSpots: [{ x: 260, y: 220, intensity: 0.8, label: 'Medical Emergency' }],
+          routingPath: null,
+          volunteerTasks: [{ id: 'task-2', title: 'Replenish Eco-Cup supplies at Stand 2', status: 'Pending', priority: 'Low' }],
+          medicalTriage: [{ id: 'med-1', name: 'John Doe (Block 102)', issue: 'Heat Exhaustion', priority: 'Red', status: 'Awaiting Dispatch' }],
+          securityIncidents: [],
+          droneStatus: 'Stationary',
+          droneReport: ''
+        };
+        notiText = "Act 5: Medical Emergency reported in Block 102. Fan collapsed.";
+        break;
+      case 6:
+        nextTelemetry = {
+          gateCWait: 2,
+          gateDWait: 3,
+          gateBWait: 3,
+          activeVisitors: 72000,
+          heatmapSpots: [{ x: 260, y: 220, intensity: 0.8, label: 'Medical Emergency' }],
+          routingPath: [{ x: 380, y: 180 }, { x: 300, y: 190 }, { x: 260, y: 220 }],
+          volunteerTasks: [{ id: 'task-2', title: 'Replenish Eco-Cup supplies at Stand 2', status: 'In Progress', priority: 'Low' }],
+          medicalTriage: [{ id: 'med-1', name: 'John Doe (Block 102)', issue: 'Heat Exhaustion', priority: 'Red', status: 'Stretcher En-Route (Accessible Elevator Route)' }],
+          securityIncidents: [],
+          droneStatus: 'Stationary',
+          droneReport: ''
+        };
+        notiText = "Act 6: Step-Free route generated. Stretcher team dispatched.";
+        break;
+      case 7:
+        nextTelemetry = {
+          gateCWait: 2,
+          gateDWait: 2,
+          gateBWait: 3,
+          activeVisitors: 78500,
+          heatmapSpots: [{ x: 380, y: 180, intensity: 0.9, label: 'Security Alert' }],
+          routingPath: null,
+          volunteerTasks: [{ id: 'task-2', title: 'Replenish Eco-Cup supplies at Stand 2', status: 'Completed', priority: 'Low' }],
+          medicalTriage: [{ id: 'med-1', name: 'John Doe (Block 102)', issue: 'Heat Exhaustion', priority: 'Green', status: 'Treated and Stable' }],
+          securityIncidents: [{ id: 'sec-1', type: 'Unattended Object', details: 'Black backpack near Gate C bench', severity: 'Critical', status: 'Drone Alert Triggered' }],
+          droneStatus: 'Hovering / Scanning',
+          droneReport: 'Scanning backpack... analyzing thermal & depth signatures...'
+        };
+        notiText = "Act 7: Security Alert: Unattended object detected near Gate C.";
+        break;
+      case 8:
+        nextTelemetry = {
+          gateCWait: 2,
+          gateDWait: 2,
+          gateBWait: 3,
+          activeVisitors: 82100,
+          heatmapSpots: [{ x: 380, y: 180, intensity: 0.2, label: 'Clear' }],
+          routingPath: null,
+          volunteerTasks: [],
+          medicalTriage: [{ id: 'med-1', name: 'John Doe (Block 102)', issue: 'Heat Exhaustion', priority: 'Green', status: 'Treated and Stable' }],
+          securityIncidents: [{ id: 'sec-1', type: 'Unattended Object', details: 'Black backpack near Gate C bench', severity: 'Low', status: 'Resolved (Personal Gear Cleared)' }],
+          droneStatus: 'Returning',
+          droneReport: 'Threat assessment: Normal. Object identified as gym bag. Incident resolved.'
+        };
+        notiText = "Act 8: Threat resolved. Drone scan confirms harmless gym gear.";
+        break;
+      case 9:
+      default:
+        nextTelemetry = {
+          gateCWait: 1,
+          gateDWait: 1,
+          gateBWait: 1,
+          activeVisitors: 15000,
+          heatmapSpots: [],
+          routingPath: null,
+          volunteerTasks: [],
+          medicalTriage: [],
+          securityIncidents: [],
+          droneStatus: 'Stationary',
+          droneReport: ''
+        };
+        notiText = "Act 9: Egress completed. Operations clear. Success match day report.";
+        break;
+    }
+
+    setTelemetry(nextTelemetry);
+
+    setNotifications(prev => [
+      {
+        id: newNotiId,
+        text: notiText,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        active: true
+      },
+      ...prev
+    ]);
+  };
+
   return (
     <AppContext.Provider value={{
       activeTab,
@@ -840,6 +1026,11 @@ export const AppProvider = ({ children }) => {
       topPlayersStats,
       liveDemoActive,
       setLiveDemoActive,
+      simulatorAct,
+      setSimulatorAct,
+      telemetry,
+      setTelemetry,
+      triggerSimulatorAct,
       t
     }}>
       {children}
