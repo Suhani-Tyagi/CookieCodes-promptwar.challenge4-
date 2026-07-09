@@ -36,7 +36,7 @@ const mockStands = [
 const menuData = {
   "stand-n-1": [
     { id: "burg", name: "Classic Arena Burger", price: 14, isVeg: false, isVegan: false, details: "Premium beef patty, cheddar, secret Arena sauce on brioche", image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=350&q=80" },
-    { id: "tend", name: "Crispy Chicken Tenders", price: 12, isVeg: false, isVegan: false, details: "Golden crispy tenders served with honey-drizzle mustard", image: "https://images.unsplash.com/photo-1562967914-6c8273972a50?auto=format&fit=crop&w=350&q=80" },
+    { id: "tend", name: "Crispy Chicken Tenders", price: 12, isVeg: false, isVegan: false, details: "Golden crispy tenders served with honey-drizzle mustard", image: "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=350&q=80" },
     { id: "fries", name: "Loaded Truffle Fries", price: 9, isVeg: true, isVegan: false, details: "Thin-cut fries smothered in warm cheese sauce & fresh chives", image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?auto=format&fit=crop&w=350&q=80" },
     { id: "soda", name: "Fountain Soda (Eco Cup)", price: 6, isVeg: true, isVegan: true, details: "Chilled soda in a reusable souvenir Arena cup", image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=350&q=80" }
   ],
