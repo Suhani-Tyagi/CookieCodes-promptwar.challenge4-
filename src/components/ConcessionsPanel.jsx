@@ -25,12 +25,12 @@ import {
 } from 'lucide-react';
 
 const mockStands = [
-  { id: "stand-n-1", name: "Apex Burgers & Brats", wait: 5, location: "North Sec 104", type: "grill", icon: Flame, color: "from-orange-500/20 to-red-500/20 text-orange-600 dark:text-orange-400" },
-  { id: "stand-n-2", name: "Crescent Shawarma & Bites", wait: 8, location: "North Sec 108", type: "halal", icon: Soup, color: "from-amber-500/20 to-yellow-500/20 text-amber-600 dark:text-amber-400" },
-  { id: "stand-n-3", name: "The Green Pitch Greens", wait: 3, location: "North Sec 102", type: "vegan", icon: Leaf, color: "from-emerald-500/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400" },
-  { id: "stand-e-1", name: "Curva Nord Pizza & Pies", wait: 12, location: "East Sec 112", type: "pizza", icon: Pizza, color: "from-red-500/20 to-rose-500/20 text-red-650 dark:text-red-400" },
-  { id: "stand-s-1", name: "Volcano Smokey Grill", wait: 10, location: "South Sec 122", type: "grill", icon: Flame, color: "from-orange-500/20 to-red-500/20 text-orange-600 dark:text-orange-400" },
-  { id: "stand-w-1", name: "Golden Boot Brews", wait: 6, location: "West Sec 130", type: "cafe", icon: Coffee, color: "from-blue-500/20 to-indigo-500/20 text-blue-600 dark:text-blue-400" }
+  { id: "stand-n-1", name: "MetLife Gridiron Grill", wait: 5, location: "North Sec 104", type: "grill", icon: Flame, color: "from-orange-500/20 to-red-500/20 text-orange-600 dark:text-orange-400" },
+  { id: "stand-n-2", name: "Halal Corner Express", wait: 8, location: "North Sec 108", type: "halal", icon: Soup, color: "from-amber-500/20 to-yellow-500/20 text-amber-600 dark:text-amber-400" },
+  { id: "stand-n-3", name: "Eco-Pitch Greens & Bowls", wait: 3, location: "North Sec 102", type: "vegan", icon: Leaf, color: "from-emerald-500/20 to-teal-500/20 text-emerald-600 dark:text-emerald-400" },
+  { id: "stand-e-1", name: "Jersey Slice Pizza", wait: 12, location: "East Sec 112", type: "pizza", icon: Pizza, color: "from-red-500/20 to-rose-500/20 text-red-650 dark:text-red-400" },
+  { id: "stand-s-1", name: "Touchdown BBQ Smokehouse", wait: 10, location: "South Sec 122", type: "grill", icon: Flame, color: "from-orange-500/20 to-red-500/20 text-orange-600 dark:text-orange-400" },
+  { id: "stand-w-1", name: "Secaucus Brews & Coffee", wait: 6, location: "West Sec 130", type: "cafe", icon: Coffee, color: "from-blue-500/20 to-indigo-500/20 text-blue-600 dark:text-blue-400" }
 ];
 
 const menuData = {
