@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext.jsx';
+import { validateText, sanitizeText } from '../utils/sanitize.js';
 import { 
   AlertTriangle, 
   MapPin, 
@@ -246,16 +247,85 @@ export default function IssueReporter() {
   const [location, setLocation] = useState('');
   const [image, setImage] = useState('');
   const [isDetectingLoc, setIsDetectingLoc] = useState(false);
+  const [imageError, setImageError] = useState('');
+  const [submitError, setSubmitError] = useState('');
+
+  const initiatingButtonRef = useRef(null);
+  const modalRef = useRef(null);
 
   // Administrative simulation panel states
   const [simStatus, setSimStatus] = useState('In Progress');
   const [simDetail, setSimDetail] = useState('');
   const [simResolution, setSimResolution] = useState('');
 
+  // Escape key listener & focus management for accessible dialog
+  useEffect(() => {
+    if (modalOpen) {
+      initiatingButtonRef.current = document.activeElement;
+      
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape') {
+          setModalOpen(false);
+          setImageError('');
+          setSubmitError('');
+        }
+        if (e.key === 'Tab' && modalRef.current) {
+          const focusable = modalRef.current.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
+          if (focusable.length > 0) {
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (e.shiftKey) {
+              if (document.activeElement === first) {
+                last.focus();
+                e.preventDefault();
+              }
+            } else {
+              if (document.activeElement === last) {
+                first.focus();
+                e.preventDefault();
+              }
+            }
+          }
+        }
+      };
+
+      document.addEventListener('keydown', handleKeyDown);
+
+      // Auto-focus first input element inside modal
+      setTimeout(() => {
+        if (modalRef.current) {
+          const firstInput = modalRef.current.querySelector('select, input, textarea, button');
+          if (firstInput) firstInput.focus();
+        }
+      }, 50);
+
+      return () => {
+        document.removeEventListener('keydown', handleKeyDown);
+        if (initiatingButtonRef.current) {
+          initiatingButtonRef.current.focus();
+        }
+      };
+    }
+  }, [modalOpen]);
+
   // Handle local image file uploads and convert to Base64 Data URL
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
+    setImageError('');
     if (file) {
+      // 5MB limit
+      if (file.size > 5 * 1024 * 1024) {
+        setImageError("File exceeds 5MB size limit.");
+        return;
+      }
+      // MIME check
+      if (!file.type.startsWith('image/')) {
+        setImageError("Only image files are allowed.");
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         setImage(reader.result); // Base64 string
@@ -277,17 +347,41 @@ export default function IssueReporter() {
   // Submit new complaint
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title.trim() || !description.trim() || !location.trim()) return;
+    setSubmitError('');
+
+    if (!title.trim() || !description.trim() || !location.trim()) {
+      setSubmitError("Please fill out all required fields.");
+      return;
+    }
+
+    // Call validateText on free-text inputs
+    const titleVal = validateText(title);
+    if (!titleVal.valid) {
+      setSubmitError(`Title: ${titleVal.message}`);
+      return;
+    }
+
+    const descVal = validateText(description);
+    if (!descVal.valid) {
+      setSubmitError(`Description: ${descVal.message}`);
+      return;
+    }
+
+    const locVal = validateText(location);
+    if (!locVal.valid) {
+      setSubmitError(`Location: ${locVal.message}`);
+      return;
+    }
 
     // Use uploaded base64 data URL if available, otherwise default to svg key
     const selectedImage = image || "svg";
 
     addComplaint({
-      title,
+      title: sanitizeText(title),
       category,
-      description,
+      description: sanitizeText(description),
       severity,
-      location,
+      location: sanitizeText(location),
       image: selectedImage
     });
 
@@ -299,6 +393,8 @@ export default function IssueReporter() {
     setSeverity('Medium');
     setLocation('');
     setImage('');
+    setImageError('');
+    setSubmitError('');
   };
 
   // Admin update simulation trigger
@@ -588,22 +684,32 @@ export default function IssueReporter() {
 
         </div>
 
-      </div>
-
-      {/* NEW INCIDENT REPORT MODAL */}
+      </div>      {/* NEW INCIDENT REPORT MODAL */}
       {modalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-          <div className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-xl animate-fade-in">
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+        >
+          <div 
+            ref={modalRef}
+            className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-xl animate-fade-in"
+          >
             
             {/* Header */}
             <div className="fifa-strip shrink-0"></div>
             <div className="flex justify-between items-center px-6 py-4 border-b border-zinc-100 dark:border-zinc-900 bg-zinc-50/50 dark:bg-zinc-900/10">
-              <h3 className="font-extrabold text-sm text-zinc-900 dark:text-zinc-550 flex items-center gap-2">
+              <h3 id="modal-title" className="font-extrabold text-sm text-zinc-900 dark:text-zinc-550 flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-emerald-500" />
                 <span>{t('newComplaintBtn')}</span>
               </h3>
               <button
-                onClick={() => setModalOpen(false)}
+                onClick={() => {
+                  setModalOpen(false);
+                  setImageError('');
+                  setSubmitError('');
+                }}
                 className="p-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-400 hover:text-zinc-650 dark:hover:text-zinc-200"
               >
                 <X className="w-5 h-5" />
@@ -611,12 +717,19 @@ export default function IssueReporter() {
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs font-medium text-zinc-550">
+            <form onSubmit={handleSubmit} className="p-6 space-y-4 text-xs font-medium text-zinc-555">
               
+              {submitError && (
+                <div className="p-3 bg-red-550/10 text-red-500 border border-red-500/20 rounded-xl font-bold">
+                  {submitError}
+                </div>
+              )}
+
               {/* Category */}
               <div className="flex flex-col">
-                <label className="font-semibold text-zinc-500 mb-1">{t('issueCategory')}</label>
+                <label htmlFor="issue-category-select" className="font-semibold text-zinc-500 mb-1">{t('issueCategory')}</label>
                 <select
+                  id="issue-category-select"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   className="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-255 dark:border-zinc-800 text-zinc-850 dark:text-zinc-150 focus:outline-none"
@@ -633,9 +746,10 @@ export default function IssueReporter() {
 
               {/* Title */}
               <div className="flex flex-col">
-                <label className="font-semibold text-zinc-500 mb-1">Brief Summary Title</label>
+                <label htmlFor="issue-title-input" className="font-semibold text-zinc-500 mb-1">Brief Summary Title</label>
                 <input
                   type="text"
+                  id="issue-title-input"
                   required
                   placeholder="e.g. Bottleneck outside Gate 3 access turnstile"
                   value={title}
@@ -646,8 +760,9 @@ export default function IssueReporter() {
 
               {/* Description */}
               <div className="flex flex-col">
-                <label className="font-semibold text-zinc-500 mb-1">{t('issueDescription')}</label>
+                <label htmlFor="issue-desc-textarea" className="font-semibold text-zinc-500 mb-1">{t('issueDescription')}</label>
                 <textarea
+                  id="issue-desc-textarea"
                   required
                   placeholder="Describe the stadium incident, specific row/seat details, or support needed..."
                   value={description}
@@ -658,9 +773,10 @@ export default function IssueReporter() {
 
               {/* Real Photo Upload Input (Reads file as Base64 Data URL) */}
               <div className="flex flex-col">
-                <label className="font-semibold text-zinc-500 mb-1">Upload Real Incident Photo</label>
+                <label htmlFor="issue-image-file" className="font-semibold text-zinc-500 mb-1">Upload Real Incident Photo</label>
                 <div className="border-2 border-dashed border-zinc-250 dark:border-zinc-800 rounded-xl p-4 text-center cursor-pointer hover:border-emerald-500 transition-colors relative">
                   <input
+                    id="issue-image-file"
                     type="file"
                     accept="image/*"
                     onChange={handleImageUpload}
@@ -679,13 +795,17 @@ export default function IssueReporter() {
                     </div>
                   )}
                 </div>
+                {imageError && (
+                  <span className="text-[10px] text-red-500 font-bold mt-1 block">{imageError}</span>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 {/* Severity */}
                 <div className="flex flex-col">
-                  <label className="font-semibold text-zinc-500 mb-1">{t('issueSeverity')}</label>
+                  <label htmlFor="issue-severity-select" className="font-semibold text-zinc-500 mb-1">{t('issueSeverity')}</label>
                   <select
+                    id="issue-severity-select"
                     value={severity}
                     onChange={(e) => setSeverity(e.target.value)}
                     className="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-255 dark:border-zinc-800 text-zinc-850 dark:text-zinc-150 focus:outline-none"
@@ -698,9 +818,10 @@ export default function IssueReporter() {
 
                 {/* Location */}
                 <div className="flex flex-col relative">
-                  <label className="font-semibold text-zinc-550 mb-1">{t('issueLocation')}</label>
+                  <label htmlFor="issue-location-input" className="font-semibold text-zinc-550 mb-1">{t('issueLocation')}</label>
                   <input
                     type="text"
+                    id="issue-location-input"
                     required
                     placeholder="e.g. Section 104 Row 12"
                     value={location}
@@ -723,7 +844,11 @@ export default function IssueReporter() {
               <div className="flex gap-3 justify-end border-t border-zinc-100 dark:border-zinc-900 pt-4 mt-6">
                 <button
                   type="button"
-                  onClick={() => setModalOpen(false)}
+                  onClick={() => {
+                    setModalOpen(false);
+                    setImageError('');
+                    setSubmitError('');
+                  }}
                   className="px-4 py-2 border border-zinc-250 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-850 rounded-lg text-zinc-700 dark:text-zinc-300 font-bold"
                 >
                   {t('cancelBtn')}

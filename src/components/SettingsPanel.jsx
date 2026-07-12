@@ -29,15 +29,11 @@ export default function SettingsPanel() {
   const [profileTicketCategory, setProfileTicketCategory] = useState(userProfile.ticketCategory);
   const [profileRole, setProfileRole] = useState(userProfile.role);
   const [profileLanguage, setProfileLanguage] = useState(userProfile.preferredLanguage);
-
   // API settings state
   const [apiMode, setApiMode] = useState(settings.apiMode);
-  const [apiKey, setApiKey] = useState(settings.geminiApiKey);
 
   const [feedback, setFeedback] = useState('');
   const [showKeyInfo, setShowKeyInfo] = useState(false);
-  // Track whether the user has entered a new key in this session
-  const [keyEditing, setKeyEditing] = useState(false);
 
   const handleSaveProfile = (e) => {
     e.preventDefault();
@@ -55,8 +51,7 @@ export default function SettingsPanel() {
   const handleSaveApiSettings = (e) => {
     e.preventDefault();
     saveSettings({
-      apiMode,
-      geminiApiKey: apiKey
+      apiMode
     });
     triggerFeedback(t('feedbackMsg'));
   };
@@ -215,45 +210,6 @@ export default function SettingsPanel() {
                 <option value="simulated">{t('simulatedEngine')}</option>
               </select>
             </div>
-
-            {/* API Key */}
-            {apiMode === 'live' && (
-              <div className="flex flex-col space-y-1">
-                <div className="flex justify-between items-center">
-                  <label className="text-zinc-500">{t('apiKeyLabel')}</label>
-                  <button
-                    type="button"
-                    onClick={() => setShowKeyInfo(!showKeyInfo)}
-                    className="text-zinc-450 hover:text-emerald-500 flex items-center gap-0.5 text-[10px]"
-                  >
-                    <HelpCircle className="w-3 h-3" />
-                    <span>How to get a key?</span>
-                  </button>
-                </div>
-
-                {showKeyInfo && (
-                  <div className="p-3 bg-zinc-50 dark:bg-zinc-900/50 rounded-xl border border-zinc-150 dark:border-zinc-850 leading-relaxed font-medium text-zinc-500">
-                    Get a free Gemini API key from <a href="https://aistudio.google.com" target="_blank" rel="noreferrer" className="text-emerald-600 dark:text-emerald-450 hover:underline">Google AI Studio</a>. Set it here to test real-time operational answers.
-                  </div>
-                )}
-
-                <input
-                  id="gemini-api-key"
-                  type={keyEditing ? 'text' : 'password'}
-                  value={keyEditing ? apiKey : (apiKey ? maskSecret(apiKey) : '')}
-                  onChange={(e) => {
-                    setKeyEditing(true);
-                    setApiKey(e.target.value);
-                  }}
-                  onFocus={() => setKeyEditing(true)}
-                  onBlur={() => setKeyEditing(false)}
-                  placeholder={t('apiKeyPlaceholder')}
-                  aria-label="Gemini API Key"
-                  aria-describedby="api-key-hint"
-                  className="px-3 py-2 rounded-lg bg-zinc-50 dark:bg-zinc-900 border border-zinc-250 dark:border-zinc-800 text-zinc-850 dark:text-zinc-150 focus:outline-none font-medium font-mono"
-                />
-              </div>
-            )}
 
             <button
               type="submit"

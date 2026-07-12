@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext.jsx';
 import { 
   Users, ShieldAlert, Heart, Settings, Bell, 
   Activity, Shield, CheckCircle, Clock, AlertTriangle, 
   Send, Mic, Upload, Eye, Zap, Database, Key, HelpCircle,
-  FileText, ShieldAlert as EvacIcon, Play, Radio
+  FileText, ShieldAlert as EvacIcon, Play, Radio, Sparkles, RefreshCw
 } from 'lucide-react';
 import VectorPitchMap from './VectorPitchMap.jsx';
+import { generateText, verifyPasscode } from '../services/geminiClient.js';
 
 // -------------------------------------------------------------
 // 1. FAN DASHBOARD VIEW
@@ -38,6 +39,7 @@ export function VolunteerDashboard() {
   const [visionImage, setVisionImage] = useState(null);
   const [visionClassifying, setVisionClassifying] = useState(false);
   const [visionResult, setVisionResult] = useState(null);
+  const [isGeneratingTask, setIsGeneratingTask] = useState(false);
 
   // Simulated voice transcription
   const handleSimulateVoice = () => {
@@ -48,26 +50,90 @@ export function VolunteerDashboard() {
     }, 2000);
   };
 
-  const handleAddVoiceTask = () => {
+  const handleAddVoiceTask = async () => {
     if (!voiceText) return;
-    const newTask = {
-      id: `task-${Date.now()}`,
-      title: voiceText,
-      status: 'Pending',
-      priority: 'Medium'
-    };
-    setTelemetry(prev => ({
-      ...prev,
-      volunteerTasks: [newTask, ...prev.volunteerTasks]
-    }));
-    setVoiceText('');
+    setIsGeneratingTask(true);
+    let newTask = null;
+    try {
+      const prompt = `You are a volunteer task dispatcher for a FIFA World Cup 2026 stadium companion.
+Analyze this volunteer spoken incident report: "${voiceText}".
+Return a JSON object containing:
+- title: a clean, concise, properly formatted task title (e.g. "Clear debris on Access Ramp near Block 102")
+- priority: "High", "Medium", or "Low" (evaluate based on safety/security risk)
+Return ONLY the JSON object, no other text or explanation.`;
+
+      const response = await generateText(prompt);
+      const cleaned = response.replace(/```json/g, '').replace(/```/g, '').trim();
+      const parsed = JSON.parse(cleaned);
+      newTask = {
+        id: `task-${Date.now()}`,
+        title: parsed.title || voiceText,
+        status: 'Pending',
+        priority: parsed.priority || 'Medium',
+        isOfflineFallback: false
+      };
+    } catch (err) {
+      console.error("Gemini task generation failed, using fallback:", err);
+      newTask = {
+        id: `task-${Date.now()}`,
+        title: `${voiceText} (Offline fallback)`,
+        status: 'Pending',
+        priority: 'Medium',
+        isOfflineFallback: true
+      };
+    } finally {
+      setIsGeneratingTask(false);
+    }
+
+    if (newTask) {
+      setTelemetry(prev => ({
+        ...prev,
+        volunteerTasks: [newTask, ...prev.volunteerTasks]
+      }));
+      setVoiceText('');
+    }
   };
 
-  // Simulated GLM Vision Triage
-  const handleSimulateVision = () => {
+  // Simulated GLM Vision Triage with Real Gemini Call
+  const handleSimulateVision = async () => {
     setVisionClassifying(true);
     setVisionResult(null);
-    setTimeout(() => {
+
+    const prompt = `You are a vision triage AI at a FIFA World Cup 2026 stadium.
+Classify this incident type: "${visionReportType}".
+Return a JSON object containing:
+- classification: hazard label (e.g. Liquid Spill / Slipping Hazard, Broken Seating / Structural Damage, Access Gate Obstruction)
+- confidence: estimated confidence percentage (e.g. "98.2%")
+- severity: "Low", "Medium", or "High"
+- resolution: recommended action (e.g. "Janitorial dispatch recommended", "Maintenance crew notification", "Steward dispatch recommended")
+
+Return ONLY the JSON object, no other text or explanation.`;
+
+    try {
+      const response = await generateText(prompt);
+      const cleaned = response.replace(/```json/g, '').replace(/```/g, '').trim();
+      const result = JSON.parse(cleaned);
+      const finalResult = {
+        classification: result.classification || `${visionReportType} Incident`,
+        confidence: result.confidence || "95.0%",
+        severity: result.severity || "Medium",
+        resolution: result.resolution || "Crew notification recommended",
+        isOfflineFallback: false
+      };
+
+      setVisionResult(finalResult);
+      setVisionClassifying(false);
+
+      // Automatically log the issue to the incidents board!
+      addComplaint({
+        title: `GLM Vision: ${finalResult.classification}`,
+        category: finalResult.classification,
+        description: `Automated visual triage report. Severity: ${finalResult.severity}. Action: ${finalResult.resolution}`,
+        severity: finalResult.severity,
+        location: "Block 104 Access Ramp"
+      });
+    } catch (err) {
+      console.error("Gemini vision triage failed, using fallback:", err);
       let result = {};
       if (visionReportType === 'Spill') {
         result = {
@@ -91,18 +157,23 @@ export function VolunteerDashboard() {
           resolution: "Steward dispatch recommended"
         };
       }
-      setVisionResult(result);
+
+      const finalResult = {
+        ...result,
+        isOfflineFallback: true
+      };
+
+      setVisionResult(finalResult);
       setVisionClassifying(false);
 
-      // Automatically log the issue to the incidents board!
       addComplaint({
-        title: `GLM Vision: ${result.classification}`,
-        category: result.classification,
-        description: `Automated visual triage report. Severity: ${result.severity}. Action: ${result.resolution}`,
-        severity: result.severity,
+        title: `GLM Vision: ${finalResult.classification} (Offline fallback)`,
+        category: finalResult.classification,
+        description: `Automated visual triage report. Severity: ${finalResult.severity}. Action: ${finalResult.resolution}`,
+        severity: finalResult.severity,
         location: "Block 104 Access Ramp"
       });
-    }, 1500);
+    }
   };
 
   return (
@@ -152,13 +223,19 @@ export function VolunteerDashboard() {
 
         {/* Voice Note Transcription Widget */}
         <div className="mt-4 pt-4 border-t border-zinc-900 flex flex-col gap-3">
-          <div>
-            <h4 className="text-xs font-bold text-zinc-200">Voice-to-Task Transcriber</h4>
-            <p className="text-[9px] text-zinc-400">Record a brief verbal update to generate a task</p>
+          <div className="flex justify-between items-center flex-wrap gap-2">
+            <div>
+              <h4 className="text-xs font-bold text-zinc-200">Voice-to-Task Transcriber</h4>
+              <p className="text-[9px] text-zinc-400">Record a brief verbal update to generate a task</p>
+            </div>
+            <span className="text-[9px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1.5 py-0.5 rounded flex items-center gap-1 font-bold shrink-0">
+              <Sparkles className="w-2.5 h-2.5" /> Powered by Gemini
+            </span>
           </div>
           <div className="flex gap-2">
             <button
               onClick={handleSimulateVoice}
+              disabled={isGeneratingTask}
               className={`px-4 py-2 rounded-xl flex items-center gap-2 text-xs font-bold transition-all ${
                 isListening 
                   ? 'bg-rose-600 text-white animate-pulse' 
@@ -173,14 +250,20 @@ export function VolunteerDashboard() {
               value={voiceText}
               onChange={(e) => setVoiceText(e.target.value)}
               placeholder="Spoken task details will appear here..."
+              disabled={isGeneratingTask}
               className="flex-1 bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-xs text-zinc-200 focus:outline-none focus:ring-1 focus:ring-emerald-500"
             />
             <button
               onClick={handleAddVoiceTask}
-              disabled={!voiceText}
-              className="p-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white"
+              disabled={!voiceText || isGeneratingTask}
+              aria-label="Send voice task"
+              className="p-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white flex items-center justify-center min-w-8"
             >
-              <Send className="w-4 h-4" />
+              {isGeneratingTask ? (
+                <RefreshCw className="w-4 h-4 animate-spin" />
+              ) : (
+                <Send className="w-4 h-4" />
+              )}
             </button>
           </div>
         </div>
@@ -189,12 +272,17 @@ export function VolunteerDashboard() {
 
       {/* Multimodal AI Triage / GLM Vision Panel */}
       <div className="bg-zinc-950/70 border border-zinc-800/80 rounded-2xl p-6 backdrop-blur-md shadow-xl flex flex-col gap-4">
-        <div>
-          <h3 className="text-sm font-black text-zinc-100 flex items-center gap-2">
-            <Upload className="w-4 h-4 text-emerald-500" />
-            GLM Vision Triage
-          </h3>
-          <p className="text-[10px] text-zinc-400">Classify incident visuals using multimodal model</p>
+        <div className="flex justify-between items-center flex-wrap gap-2">
+          <div>
+            <h3 className="text-sm font-black text-zinc-100 flex items-center gap-2">
+              <Upload className="w-4 h-4 text-emerald-500" />
+              GLM Vision Triage
+            </h3>
+            <p className="text-[10px] text-zinc-400">Classify incident visuals using multimodal model</p>
+          </div>
+          <span className="text-[9px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1.5 py-0.5 rounded flex items-center gap-1 font-bold shrink-0">
+            <Sparkles className="w-2.5 h-2.5" /> Powered by Gemini
+          </span>
         </div>
 
         <div className="space-y-3">
@@ -227,7 +315,12 @@ export function VolunteerDashboard() {
           {/* Classification result */}
           {visionResult && (
             <div className="mt-2 p-3 bg-zinc-900/80 border border-emerald-500/20 rounded-xl space-y-1.5 animate-fade-in text-[11px]">
-              <p className="font-bold text-emerald-400 text-xs">Classification Report:</p>
+              <div className="flex justify-between items-center border-b border-zinc-800 pb-1.5 mb-1.5">
+                <p className="font-bold text-emerald-400 text-xs">Classification Report:</p>
+                {visionResult.isOfflineFallback && (
+                  <span className="text-[8px] bg-zinc-800 text-zinc-450 border border-zinc-700 px-1.5 py-0.5 rounded font-black uppercase tracking-wider">Offline fallback</span>
+                )}
+              </div>
               <p><span className="text-zinc-500">Label:</span> <span className="font-semibold text-zinc-200">{visionResult.classification}</span></p>
               <p><span className="text-zinc-500">Confidence:</span> <span className="font-semibold text-zinc-200">{visionResult.confidence}</span></p>
               <p><span className="text-zinc-500">Risk Severity:</span> <span className="font-bold text-amber-500">{visionResult.severity}</span></p>
@@ -247,6 +340,49 @@ export function VolunteerDashboard() {
 // -------------------------------------------------------------
 export function OperationsDashboard() {
   const { telemetry, setTelemetry, simulatorAct, triggerSimulatorAct } = useApp();
+  const [advisory, setAdvisory] = useState('');
+  const [advisoryLoading, setAdvisoryLoading] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    const fetchAdvisory = async () => {
+      setAdvisoryLoading(true);
+      try {
+        const prompt = `You are a stadium command center operations coordinator for the FIFA World Cup 2026.
+Analyze current stadium telemetry:
+- Active visitors: ${telemetry.activeVisitors}
+- Gate C wait time: ${telemetry.gateCWait} minutes
+- Gate D wait time: ${telemetry.gateDWait} minutes
+- Gate B wait time: ${telemetry.gateBWait} minutes
+
+Provide a concise, 1-2 sentence real-time operational advisory or crowd-routing recommendation. Keep it under 30 words.`;
+        const text = await generateText(prompt);
+        if (active) {
+          setAdvisory(text);
+        }
+      } catch (err) {
+        console.error("Failed to generate operations advisory:", err);
+        let fallback = "All gates operating normally.";
+        if (telemetry.gateCWait > 15) {
+          fallback = `Gate C is at high capacity (${telemetry.gateCWait}m wait); recommend redirecting incoming fans to Gate D or Gate B.`;
+        } else if (telemetry.gateDWait > 15) {
+          fallback = `Gate D is experiencing queues (${telemetry.gateDWait}m wait); recommend volunteer deployment to Gate D.`;
+        }
+        if (active) {
+          setAdvisory(fallback + " (Offline fallback)");
+        }
+      } finally {
+        if (active) {
+          setAdvisoryLoading(false);
+        }
+      }
+    };
+
+    fetchAdvisory();
+    return () => {
+      active = false;
+    };
+  }, [telemetry.activeVisitors, telemetry.gateCWait, telemetry.gateDWait, telemetry.gateBWait]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -288,6 +424,28 @@ export function OperationsDashboard() {
             <span className="text-[8px] font-black uppercase text-zinc-500 block mb-1">Gate B Inflow</span>
             <p className="text-lg font-black text-zinc-100">{telemetry.gateBWait}m</p>
           </div>
+        </div>
+
+        {/* Live GenAI Operations Advisory */}
+        <div className="bg-zinc-900 border border-zinc-850 rounded-xl p-3.5 space-y-2 relative">
+          <div className="flex justify-between items-center">
+            <span className="text-[9px] font-black uppercase text-emerald-450 tracking-wider flex items-center gap-1">
+              <Radio className="w-3 h-3 text-emerald-500 animate-pulse" /> Live GenAI Operations Advisory
+            </span>
+            <span className="text-[8px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-1.5 py-0.5 rounded font-black uppercase flex items-center gap-0.5">
+              <Sparkles className="w-2 h-2" /> Powered by Gemini
+            </span>
+          </div>
+          {advisoryLoading ? (
+            <div className="flex items-center gap-2 text-[10px] text-zinc-500">
+              <RefreshCw className="w-3.5 h-3.5 animate-spin text-emerald-500" />
+              <span>Analyzing live telemetry metrics...</span>
+            </div>
+          ) : (
+            <p className="text-[11px] font-medium text-zinc-300 leading-relaxed">
+              {advisory}
+            </p>
+          )}
         </div>
 
         {/* Sandbox Override Sliders */}
@@ -347,8 +505,9 @@ export function SecurityDashboard() {
   const [overrideActive, setOverrideActive] = useState(false);
   const [overrideMessage, setOverrideMessage] = useState('');
 
-  const handleUnlockOverride = () => {
-    if (passcode === 'FIFA2026') {
+  const handleUnlockOverride = async () => {
+    const isValid = await verifyPasscode(passcode);
+    if (isValid) {
       setOverrideUnlocked(true);
       setOverrideMessage('Passcode verified. Ready to trigger evacuation.');
     } else {

@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext.jsx';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { generateText } from '../services/geminiClient.js';
+import { validateText, sanitizeText } from '../utils/sanitize.js';
 import { 
   Send, 
   Mic, 
@@ -323,15 +324,7 @@ All fans must pass security checkpoints using a clear bag policy and a verified 
 
   const getGeminiResponse = async (userText) => {
     if (settings.apiMode === 'live') {
-      if (!settings.geminiApiKey) {
-        const fallbackText = getSimulatedResponse(userText);
-        return `ℹ️ [Simulated Fallback Mode - No Gemini API Key provided. Enter your key in Settings to activate Live Gemini Engine]\n\n${fallbackText}`;
-      }
       try {
-        const genAI = new GoogleGenerativeAI(settings.geminiApiKey);
-        // Use gemini-1.5-flash as the standard model
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        
         // Inject system instructions for the stadium operations agent based on active role
         const prompt = `You are "ArenaAssist", an advanced GenAI stadium operations assistant and multilingual fan liaison for the FIFA World Cup 2026.
 You are running at MetLife Stadium, NY/NJ.
@@ -354,9 +347,8 @@ Adapt your tone and operational details to their Active Role:
 
 User Query: ${userText}`;
 
-        const result = await model.generateContent(prompt);
-        const response = await result.response;
-        return response.text();
+        const text = await generateText(prompt);
+        return text;
       } catch (err) {
         console.error("Gemini API Error:", err);
         const fallbackText = getSimulatedResponse(userText);
@@ -377,11 +369,20 @@ User Query: ${userText}`;
     const text = textToSend || inputValue;
     if (!text.trim()) return;
 
+    // Validate free-text input
+    const validation = validateText(text);
+    if (!validation.valid) {
+      setErrorMsg(validation.message);
+      return;
+    }
+
     setErrorMsg('');
+    const sanitizedInput = sanitizeText(text);
+    
     // User message
     const userMsg = {
       sender: "user",
-      text: text,
+      text: sanitizedInput,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
@@ -408,23 +409,20 @@ User Query: ${userText}`;
 
   const handleSimplifyPolicy = async () => {
     if (!policyText.trim()) return;
+
+    // Validate free-text input
+    const validation = validateText(policyText);
+    if (!validation.valid) {
+      setErrorMsg(validation.message);
+      return;
+    }
+
     setSimplifying(true);
     setErrorMsg('');
     setSimplifiedResult(null);
 
     if (settings.apiMode === 'live') {
-      if (!settings.geminiApiKey) {
-        const fallbackText = getSimulatedPolicySimplification();
-        setSimplifiedResult({
-          text: `ℹ️ [Simulated Fallback Mode - No Gemini API Key. Switched to offline analyzer]\n\n${fallbackText}`,
-          engine: "Simulated Fallback Engine"
-        });
-        setSimplifying(false);
-        return;
-      }
       try {
-        const genAI = new GoogleGenerativeAI(settings.geminiApiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const prompt = `You are a regulations simplifier for FIFA World Cup 2026. Parse this complex policy text and generate a structured summary including:
 1. "Core Rule" (A single sentence description)
 2. "Allowed vs Prohibited Items" (Compare in lists)
@@ -432,8 +430,7 @@ User Query: ${userText}`;
 Respond in the matching language of the policy or ${language}.
 Regulations Text: ${policyText}`;
 
-        const result = await model.generateContent(prompt);
-        const text = await result.response.text();
+        const text = await generateText(prompt);
         
         setSimplifiedResult({
           text,
@@ -443,7 +440,7 @@ Regulations Text: ${policyText}`;
         console.error(err);
         const fallbackText = getSimulatedPolicySimplification();
         setSimplifiedResult({
-          text: `⚠️ [Gemini API Error: ${err.message || "Failed to simplify circular"}. Switched to offline analyzer]\n\n${fallbackText}`,
+          text: `⚠️ [Gemini API Error: ${err.message || "Failed to simplify policy"}. Switched to offline analyzer]\n\n${fallbackText}`,
           engine: "Simulated Fallback Engine"
         });
       } finally {
@@ -467,7 +464,12 @@ Regulations Text: ${policyText}`;
       {/* Page Title & Mode Indicator */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-4">
         <div>
-          <h2 className="text-2xl font-black tracking-tight">{t('navCompanion')}</h2>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h2 className="text-2xl font-black tracking-tight">{t('navCompanion')}</h2>
+            <span className="text-[10px] bg-purple-500/10 text-purple-400 border border-purple-500/20 px-2 py-0.5 rounded flex items-center gap-1 font-bold">
+              <Sparkles className="w-3 h-3" /> Powered by Gemini
+            </span>
+          </div>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
             GenAI assistance for matchday logistics, accessibility routing, and policy translation.
           </p>

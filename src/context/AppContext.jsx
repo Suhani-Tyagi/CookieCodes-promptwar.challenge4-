@@ -213,8 +213,7 @@ export const AppProvider = ({ children }) => {
   ]);
 
   const [settings, setSettings] = useState({
-    apiMode: localStorage.getItem('gemini_api_mode') || "live", 
-    geminiApiKey: localStorage.getItem('gemini_api_key') || import.meta.env.VITE_GEMINI_API_KEY || ""
+    apiMode: localStorage.getItem('gemini_api_mode') || "live"
   });
 
   const [liveDemoActive, setLiveDemoActive] = useState(false);
@@ -792,11 +791,6 @@ export const AppProvider = ({ children }) => {
   const saveSettings = (newSettings) => {
     setSettings(newSettings);
     localStorage.setItem('gemini_api_mode', newSettings.apiMode);
-    if (newSettings.geminiApiKey) {
-      localStorage.setItem('gemini_api_key', newSettings.geminiApiKey);
-    } else {
-      localStorage.removeItem('gemini_api_key');
-    }
   };
 
   const dismissNotification = (id) => {

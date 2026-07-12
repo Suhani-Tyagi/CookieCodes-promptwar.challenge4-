@@ -368,14 +368,15 @@ export default function ConcessionsPanel() {
 
                   {/* Reusable Cup Sustainability Switch */}
                   <div className="border-t border-zinc-100 dark:border-zinc-900 pt-3 relative overflow-hidden bg-zinc-50/50 dark:bg-zinc-900/30 p-2.5 rounded-xl border border-zinc-150 dark:border-zinc-850">
-                    <label className="flex items-start gap-2.5 text-xs font-bold text-zinc-800 dark:text-zinc-300 cursor-pointer select-none">
+                    <div className="flex items-start gap-2.5">
                       <input
                         type="checkbox"
+                        id="use-reusable-cup-checkbox"
                         checked={useReusableCup}
                         onChange={(e) => setUseReusableCup(e.target.checked)}
                         className="w-4 h-4 rounded border-zinc-300 dark:border-zinc-700 text-emerald-650 focus:ring-emerald-500 mt-0.5"
                       />
-                      <div className="space-y-0.5 flex-1">
+                      <label htmlFor="use-reusable-cup-checkbox" className="space-y-0.5 flex-1 text-xs font-bold text-zinc-800 dark:text-zinc-300 cursor-pointer select-none">
                         <span className="flex items-center gap-1">
                           Use Reusable Souvenir Cup
                           {useReusableCup && (
@@ -385,8 +386,8 @@ export default function ConcessionsPanel() {
                         <span className="text-[9px] text-emerald-600 dark:text-emerald-450 block font-black uppercase">
                           Save $1.00 & Gain +50 Eco-Points!
                         </span>
-                      </div>
-                    </label>
+                      </label>
+                    </div>
                   </div>
 
                   {/* Calculations */}
