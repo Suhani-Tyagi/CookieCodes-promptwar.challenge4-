@@ -898,26 +898,23 @@ export function AdminDashboard() {
         <div>
           <h3 className="text-sm font-black text-zinc-100 flex items-center gap-2">
             <Key className="w-4 h-4 text-emerald-500" />
-            API Key Provisioning
+            API Key Status
           </h3>
-          <p className="text-[10px] text-zinc-400">Configure global Gemini AI engine keys</p>
+          <p className="text-[10px] text-zinc-400">Review backend generative service settings</p>
         </div>
 
         <div className="space-y-3 text-xs">
-          <p className="text-[10px] text-zinc-450 leading-normal">
+          <p className="text-[10px] text-zinc-400 leading-normal">
             Status: <span className="text-emerald-400 font-bold">API Mode Configured ({settings.apiMode})</span>
           </p>
           <div className="space-y-1">
-            <span className="text-[9px] font-black uppercase text-zinc-550 block">Gemini API Key</span>
-            <input
-              type="text"
-              readOnly
-              value={settings.geminiApiKey ? settings.geminiApiKey.replace(/./g, '*') : 'No Key Provided'}
-              className="w-full bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-zinc-400 focus:outline-none"
-            />
+            <span className="text-[9px] font-black uppercase text-zinc-500 block">Server-side key configured</span>
+            <div className="bg-zinc-900 border border-zinc-800 rounded-xl px-3 py-2 text-zinc-405 font-bold">
+              Yes (Server-side environment variable active)
+            </div>
           </div>
-          <p className="text-[9px] text-zinc-550 leading-normal">
-            Keys are stored in browser localStorage. Toggles are managed in Settings Panel.
+          <p className="text-[9px] text-zinc-500 leading-normal">
+            The Gemini API key is loaded securely from the Vercel server environment (process.env.GEMINI_API_KEY) to protect credentials from client disclosure.
           </p>
         </div>
 

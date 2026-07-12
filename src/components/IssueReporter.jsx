@@ -315,9 +315,9 @@ export default function IssueReporter() {
     const file = e.target.files[0];
     setImageError('');
     if (file) {
-      // 5MB limit
-      if (file.size > 5 * 1024 * 1024) {
-        setImageError("File exceeds 5MB size limit.");
+      // 2MB limit (production deployments need server-side re-validation before persisting uploaded images)
+      if (file.size > 2 * 1024 * 1024) {
+        setImageError("File exceeds 2MB size limit.");
         return;
       }
       // MIME check

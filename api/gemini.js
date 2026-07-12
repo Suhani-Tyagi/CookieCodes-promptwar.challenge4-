@@ -1,9 +1,49 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+// In-memory IP rate limiter
+// NOTE: Production deployments should use a durable store (e.g. Redis/Vercel KV) instead of in-memory state.
+const rateLimitMap = new Map();
+const LIMIT = 20; // max 20 requests per minute
+const WINDOW = 60 * 1000; // 1 minute
+
+function isRateLimited(ip) {
+  const now = Date.now();
+  if (!rateLimitMap.has(ip)) {
+    rateLimitMap.set(ip, { count: 1, resetTime: now + WINDOW });
+    return false;
+  }
+  const entry = rateLimitMap.get(ip);
+  if (now > entry.resetTime) {
+    entry.count = 1;
+    entry.resetTime = now + WINDOW;
+    return false;
+  }
+  entry.count++;
+  if (entry.count > LIMIT) {
+    return true;
+  }
+  return false;
+}
+
 export default async function handler(req, res) {
-  // CORS Headers
+  // CORS & Origin Verification
+  const allowedOriginsEnv = process.env.ALLOWED_ORIGINS || '';
+  const allowedOrigins = allowedOriginsEnv ? allowedOriginsEnv.split(',').map(o => o.trim()) : [];
+  const origin = req.headers.origin || '';
+
+  if (allowedOrigins.length > 0) {
+    if (!allowedOrigins.includes(origin)) {
+      return res.status(403).json({ error: 'Origin not allowed' });
+    }
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    // If ALLOWED_ORIGINS is not set, we default to rejecting the request if there is an origin
+    if (origin) {
+      return res.status(403).json({ error: 'Origin not allowed' });
+    }
+  }
+
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
   res.setHeader(
     'Access-Control-Allow-Headers',
@@ -12,6 +52,12 @@ export default async function handler(req, res) {
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
+  }
+
+  // Rate Limiter check
+  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+  if (isRateLimited(ip)) {
+    return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
 
   if (req.method !== 'POST') {
@@ -25,7 +71,6 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
-    // If not configured, we'll return a 500 error so the client falls back to simulated offline response
     return res.status(500).json({ error: 'GEMINI_API_KEY environment variable is not configured' });
   }
 
