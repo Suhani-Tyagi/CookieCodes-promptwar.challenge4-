@@ -27,10 +27,9 @@ function isRateLimited(ip) {
 const FIXTURES_TTL_SECS = 20 * 60; // 20 minutes
 const STANDINGS_TTL_SECS = 60 * 60; // 60 minutes
 const STATS_TTL_SECS = 60 * 60; // 60 minutes
-
 // Hardcoded World Cup League ID for API-SPORTS (World Cup is league 1)
 const LEAGUE_ID = 1;
-const SEASON = 2026;
+const SEASON = 2022;
 
 // Mock Fallback Data matching AppContext expected shapes
 const mockMatches = [
@@ -360,7 +359,12 @@ const teamFlags = {
   "France": "🇫🇷", "Morocco": "🇲🇦", "Spain": "🇪🇸", "Belgium": "🇧🇪",
   "Germany": "🇩🇪", "Argentina": "🇦🇷", "Norway": "🇳🇴", "England": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
   "Canada": "🇨🇦", "Brazil": "🇧🇷", "Portugal": "🇵🇹", "Mexico": "🇲🇽",
-  "USA": "🇺🇸", "South Africa": "🇿🇦", "Peru": "🇵🇪", "New Zealand": "🇳🇿"
+  "USA": "🇺🇸", "South Africa": "🇿🇦", "Peru": "🇵🇪", "New Zealand": "🇳🇿",
+  "Qatar": "🇶🇦", "Ecuador": "🇪🇨", "Senegal": "🇸🇳", "Netherlands": "🇳🇱",
+  "Iran": "🇮🇷", "Wales": "🏴󠁧󠁢󠁷󠁬󠁳󠁿", "Saudi Arabia": "🇸🇦", "Poland": "🇵🇱",
+  "Australia": "🇦🇺", "Denmark": "🇩🇰", "Tunisia": "🇹🇳", "Costa Rica": "🇨🇷",
+  "Japan": "🇯🇵", "Croatia": "🇭🇷", "Switzerland": "🇨🇭", "Cameroon": "🇨🇲",
+  "Serbia": "🇷🇸", "Uruguay": "🇺🇾", "South Korea": "🇰🇷", "Ghana": "🇬🇭"
 };
 
 const teamColors = {
@@ -377,10 +381,76 @@ const teamColors = {
   "Portugal": { primary: "#006600", secondary: "#FF0000", accent: "#FFFFFF", name: "Portugal Red" },
   "Mexico": { primary: "#006847", secondary: "#D00C27", accent: "#FFFFFF", name: "Mexico Green" },
   "USA": { primary: "#0A3161", secondary: "#B31942", accent: "#FFFFFF", name: "USA Blue & Red" },
-  "South Africa": { primary: "#000000", secondary: "#007A4B", accent: "#F4A900", name: "South Africa Gold & Green" }
+  "South Africa": { primary: "#000000", secondary: "#007A4B", accent: "#F4A900", name: "South Africa Gold & Green" },
+  "Qatar": { primary: "#8A1538", secondary: "#FFFFFF", accent: "#8A1538", name: "Qatar Maroon" },
+  "Ecuador": { primary: "#FFDD00", secondary: "#2F509E", accent: "#DD2534", name: "Ecuador Yellow" },
+  "Senegal": { primary: "#00853F", secondary: "#FDEF42", accent: "#E31B23", name: "Senegal Green" },
+  "Netherlands": { primary: "#F36C21", secondary: "#FFFFFF", accent: "#21468B", name: "Netherlands Orange" },
+  "Iran": { primary: "#239E46", secondary: "#FFFFFF", accent: "#DA3832", name: "Iran Green" },
+  "Wales": { primary: "#C8102E", secondary: "#00AB4E", accent: "#FFFFFF", name: "Wales Red" },
+  "Saudi Arabia": { primary: "#006C35", secondary: "#FFFFFF", accent: "#006C35", name: "Saudi Arabia Green" },
+  "Poland": { primary: "#FFFFFF", secondary: "#DC143C", accent: "#FFFFFF", name: "Poland White & Red" },
+  "Australia": { primary: "#002F6C", secondary: "#FFCD00", accent: "#008751", name: "Australia Blue & Gold" },
+  "Denmark": { primary: "#C8102E", secondary: "#FFFFFF", accent: "#C8102E", name: "Denmark Red & White" },
+  "Tunisia": { primary: "#E70013", secondary: "#FFFFFF", accent: "#E70013", name: "Tunisia Red" },
+  "Costa Rica": { primary: "#C8102E", secondary: "#002B49", accent: "#FFFFFF", name: "Costa Rica Red" },
+  "Japan": { primary: "#00005C", secondary: "#FFFFFF", accent: "#D30000", name: "Japan Blue Samurai" },
+  "Croatia": { primary: "#C8102E", secondary: "#FFFFFF", accent: "#1D2B58", name: "Croatia Checkers" },
+  "Switzerland": { primary: "#D52B1E", secondary: "#FFFFFF", accent: "#D52B1E", name: "Switzerland Red" },
+  "Cameroon": { primary: "#007A5E", secondary: "#CE1126", accent: "#FCD116", name: "Cameroon Green" },
+  "Serbia": { primary: "#C8102E", secondary: "#0C4076", accent: "#FFFFFF", name: "Serbia Red" },
+  "Uruguay": { primary: "#55B3FF", secondary: "#FFFFFF", accent: "#FFDD00", name: "Uruguay Sky Blue" },
+  "South Korea": { primary: "#E4002B", secondary: "#000000", accent: "#115740", name: "South Korea Red" },
+  "Ghana": { primary: "#FFFFFF", secondary: "#FCD116", accent: "#CE1126", name: "Ghana White" }
 };
 
 const defaultColors = { primary: "#71717a", secondary: "#e4e4e7", accent: "#ffffff", name: "Default Gray" };
+
+const starPlayers = {
+  "Qatar": { name: "Almoez Ali", number: "19", id: 22223, stats: "1 Goal, 2 Shots, Rating 7.2" },
+  "Ecuador": { name: "Enner Valencia", number: "13", id: 2682, stats: "3 Goals, Rating 8.4" },
+  "Senegal": { name: "Sadio Mané", number: "10", id: 13, stats: "1 Goal, Rating 7.8" },
+  "Netherlands": { name: "Cody Gakpo", number: "8", id: 184, stats: "3 Goals, Rating 8.2" },
+  "England": { name: "Harry Kane", number: "9", id: 184, stats: "2 Goals, 3 Assists, Rating 8.4" },
+  "Iran": { name: "Mehdi Taremi", number: "9", id: 367, stats: "2 Goals, Rating 7.6" },
+  "USA": { name: "Christian Pulisic", number: "10", id: 368, stats: "1 Goal, 1 Assist, Rating 8.1" },
+  "Wales": { name: "Gareth Bale", number: "11", id: 172, stats: "1 Goal, Rating 7.0" },
+  "Argentina": { name: "Lionel Messi", number: "10", id: 154, stats: "7 Goals, 3 Assists, Rating 9.0" },
+  "Saudi Arabia": { name: "Salem Al-Dawsari", number: "10", id: 2314, stats: "2 Goals, Rating 7.5" },
+  "Mexico": { name: "Guillermo Ochoa", number: "13", id: 2378, stats: "1 Penalty Save, Rating 7.8" },
+  "Poland": { name: "Robert Lewandowski", number: "9", id: 521, stats: "2 Goals, 1 Assist, Rating 7.9" },
+  "France": { name: "Kylian Mbappé", number: "10", id: 278, stats: "8 Goals, 2 Assists, Rating 8.9" },
+  "Australia": { name: "Craig Goodwin", number: "23", id: 2884, stats: "1 Goal, Rating 7.3" },
+  "Denmark": { name: "Christian Eriksen", number: "10", id: 190, stats: "1 Assist, Rating 7.4" },
+  "Tunisia": { name: "Wahbi Khazri", number: "10", id: 41, stats: "1 Goal, Rating 7.6" },
+  "Spain": { name: "Álvaro Morata", number: "7", id: 147, stats: "3 Goals, 1 Assist, Rating 8.0" },
+  "Costa Rica": { name: "Keylor Navas", number: "1", id: 735, stats: "1 Clean Sheet, Rating 7.5" },
+  "Germany": { name: "Kai Havertz", number: "7", id: 105, stats: "2 Goals, Rating 7.7" },
+  "Japan": { name: "Ritsu Doan", number: "8", id: 1221, stats: "2 Goals, Rating 7.8" },
+  "Belgium": { name: "Michy Batshuayi", number: "23", id: 622, stats: "1 Goal, Rating 7.1" },
+  "Canada": { name: "Alphonso Davies", number: "19", id: 191, stats: "1 Goal, Rating 7.4" },
+  "Morocco": { name: "Hakim Ziyech", number: "7", id: 2289, stats: "1 Goal, 1 Assist, Rating 8.2" },
+  "Croatia": { name: "Luka Modrić", number: "10", id: 752, stats: "1 Assist, Rating 8.1" },
+  "Switzerland": { name: "Breel Embolo", number: "7", id: 128, stats: "2 Goals, Rating 7.5" },
+  "Cameroon": { name: "Vincent Aboubakar", number: "10", id: 1845, stats: "2 Goals, 1 Assist, Rating 8.0" },
+  "Brazil": { name: "Neymar Jr", number: "10", id: 276, stats: "2 Goals, 1 Assist, Rating 8.3" },
+  "Serbia": { name: "Aleksandar Mitrović", number: "9", id: 202, stats: "2 Goals, Rating 7.4" },
+  "Uruguay": { name: "Giorgian de Arrascaeta", number: "10", id: 213, stats: "2 Goals, Rating 7.9" },
+  "South Korea": { name: "Son Heung-min", number: "7", id: 186, stats: "1 Assist, Rating 7.5" },
+  "Portugal": { name: "Bruno Fernandes", number: "8", id: 211, stats: "2 Goals, 3 Assists, Rating 8.6" },
+  "Ghana": { name: "Mohammed Kudus", number: "20", id: 187, stats: "2 Goals, Rating 7.8" }
+};
+
+function getStarPlayer(teamName) {
+  const player = starPlayers[teamName] || { name: `${teamName} Player`, number: "10", id: 0, stats: "Active Rating 7.0" };
+  return {
+    name: player.name,
+    jerseyColor: teamColors[teamName]?.primary || "#71717a",
+    number: player.number,
+    stats: player.stats,
+    photoUrl: player.id ? `https://media.api-sports.io/football/players/${player.id}.png` : ""
+  };
+}
 
 function mapStatus(shortStatus) {
   const liveCodes = ['1H', 'HT', '2H', 'ET', 'BT', 'P', 'INT'];
@@ -469,7 +539,18 @@ export default async function handler(req, res) {
       allGroupsStandings: cachedStandings || mockAllGroupsStandings,
       topStatsData: cachedStats || mockTopStatsData,
       isSimulated: true,
-      lastUpdated: fixturesTime || now
+      lastUpdated: fixturesTime || now,
+      debug: {
+        cacheHitFixtures: !!cachedFixtures,
+        cacheHitStandings: !!cachedStandings,
+        cacheHitStats: !!cachedStats,
+        dailyCallCount: currentQuota,
+        hasError: false,
+        isSimulated: true,
+        reason: !apiKey ? "missing_api_key" : "quota_exceeded",
+        leagueId: LEAGUE_ID,
+        season: SEASON
+      }
     });
   }
 
@@ -528,19 +609,9 @@ export default async function handler(req, res) {
                 scoreA: f.goals.home ?? 0,
                 scoreB: f.goals.away ?? 0,
                 events: [],
-                bestPlayer: "Player",
-                bestPlayerDetails: {
-                  name: "Player",
-                  jerseyColor: teamColors[home]?.primary || "#000",
-                  number: "10",
-                  stats: "Active Rating 8.0"
-                },
-                opponentBestPlayerDetails: {
-                  name: "Opponent Player",
-                  jerseyColor: teamColors[away]?.primary || "#000",
-                  number: "7",
-                  stats: "Active Rating 7.8"
-                },
+                bestPlayer: getStarPlayer(home).name,
+                bestPlayerDetails: getStarPlayer(home),
+                opponentBestPlayerDetails: getStarPlayer(away),
                 details: f.league.round || "Match"
               };
             });
@@ -625,7 +696,7 @@ export default async function handler(req, res) {
                 country: item.player.nationality + ' ' + (teamFlags[item.player.nationality] || ''),
                 value: `${stats.goals.total || 0} goals`,
                 subtext: `${stats.goals.assists || 0} Assists, Rating ${stats.games.rating || '0.00'}`,
-                photoUrl: item.player.photo,
+                photoUrl: item.player.photo || (item.player.id ? `https://media.api-sports.io/football/players/${item.player.id}.png` : ''),
                 jerseyColor: teamColors[stats.team.name]?.primary || "#71717a",
                 number: stats.games.number || "10"
               };
@@ -640,7 +711,7 @@ export default async function handler(req, res) {
                 country: item.player.nationality + ' ' + (teamFlags[item.player.nationality] || ''),
                 value: `${stats.goals.assists || 0} assists`,
                 subtext: `${stats.goals.total || 0} Goals, Rating ${stats.games.rating || '0.00'}`,
-                photoUrl: item.player.photo,
+                photoUrl: item.player.photo || (item.player.id ? `https://media.api-sports.io/football/players/${item.player.id}.png` : ''),
                 jerseyColor: teamColors[stats.team.name]?.primary || "#71717a",
                 number: stats.games.number || "7"
               };
@@ -666,7 +737,17 @@ export default async function handler(req, res) {
       allGroupsStandings: cachedStandings || mockAllGroupsStandings,
       topStatsData: cachedStats || mockTopStatsData,
       isSimulated: hasError || (!cachedFixtures && !cachedStandings && !cachedStats),
-      lastUpdated: fixturesTime || now
+      lastUpdated: fixturesTime || now,
+      debug: {
+        cacheHitFixtures: !needFixtures,
+        cacheHitStandings: !needStandings,
+        cacheHitStats: !needStats,
+        dailyCallCount: currentQuota,
+        hasError,
+        isSimulated: hasError || (!cachedFixtures && !cachedStandings && !cachedStats),
+        leagueId: LEAGUE_ID,
+        season: SEASON
+      }
     });
 
   } catch (error) {
@@ -676,7 +757,18 @@ export default async function handler(req, res) {
       allGroupsStandings: cachedStandings || mockAllGroupsStandings,
       topStatsData: cachedStats || mockTopStatsData,
       isSimulated: true,
-      lastUpdated: fixturesTime || now
+      lastUpdated: fixturesTime || now,
+      debug: {
+        cacheHitFixtures: !!cachedFixtures,
+        cacheHitStandings: !!cachedStandings,
+        cacheHitStats: !!cachedStats,
+        dailyCallCount: currentQuota,
+        hasError: true,
+        rawError: error.message || String(error),
+        isSimulated: true,
+        leagueId: LEAGUE_ID,
+        season: SEASON
+      }
     });
   }
 }

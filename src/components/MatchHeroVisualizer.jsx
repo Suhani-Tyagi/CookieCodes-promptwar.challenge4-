@@ -97,7 +97,7 @@ export const MatchHeroVisualizer = React.memo(function MatchHeroVisualizer({ mat
         <div className="relative h-full flex flex-col justify-end items-center pb-6">
           <div className="absolute inset-0 flex items-center justify-center bottom-12">
             <div className="relative w-28 h-40 sm:w-40 sm:h-56 md:w-48 md:h-64 flex items-end justify-center overflow-hidden">
-              {leftImgError || !starA || !starA.photoUrl ? (
+              {leftImgError || !starA || !starA.photoUrl || starA.photoUrl.includes('undefined') || starA.photoUrl.includes('null') || starA.photoUrl.endsWith('/0.png') ? (
                 <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full flex items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-700 shadow-lg text-4xl">
                   👤
                 </div>
@@ -180,7 +180,7 @@ export const MatchHeroVisualizer = React.memo(function MatchHeroVisualizer({ mat
         <div className="relative h-full flex flex-col justify-end items-center pb-6">
           <div className="absolute inset-0 flex items-center justify-center bottom-12">
             <div className="relative w-28 h-40 sm:w-40 sm:h-56 md:w-48 md:h-64 flex items-end justify-center overflow-hidden">
-              {rightImgError || !starB || !starB.photoUrl ? (
+              {rightImgError || !starB || !starB.photoUrl || starB.photoUrl.includes('undefined') || starB.photoUrl.includes('null') || starB.photoUrl.endsWith('/0.png') ? (
                 <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full flex items-center justify-center bg-gradient-to-br from-zinc-800 to-zinc-900 border border-zinc-700 shadow-lg text-4xl">
                   👤
                 </div>

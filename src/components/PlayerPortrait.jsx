@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
 export default function PlayerPortrait({ name, jerseyColor, number, flag, photoUrl, className = "w-12 h-12 shrink-0" }) {
-  const [hasError, setHasError] = useState(!photoUrl);
+  const isInvalidUrl = !photoUrl || photoUrl.includes('undefined') || photoUrl.includes('null') || photoUrl.endsWith('/0.png');
+  const [hasError, setHasError] = useState(isInvalidUrl);
 
   useEffect(() => {
-    setHasError(!photoUrl);
-  }, [photoUrl]);
+    setHasError(isInvalidUrl);
+  }, [photoUrl, isInvalidUrl]);
 
   const getFallbackFace = () => {
     switch (name) {
