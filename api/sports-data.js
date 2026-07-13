@@ -88,7 +88,7 @@ const mockMatches = [
       jerseyColor: "#C1272D",
       number: "19",
       stats: "2 Goals, 4 Assists, Rating 9.1",
-      photoUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b8/Lamine_Yamal_2024.jpg"
+      photoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Lamine_Yamal_in_2025.jpg"
     },
     opponentBestPlayerDetails: {
       name: "Kevin De Bruyne",
@@ -121,7 +121,7 @@ const mockMatches = [
       jerseyColor: "#FFFFFF",
       number: "10",
       stats: "4 Goals, Rating 9.2",
-      photoUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f3/Jamal_Musiala_2022.jpg"
+      photoUrl: "https://upload.wikimedia.org/wikipedia/commons/b/be/Jamal_Musiala_2022.jpg"
     },
     opponentBestPlayerDetails: {
       name: "Lionel Messi",
@@ -315,7 +315,7 @@ const mockMatches = [
     ],
     bestPlayer: "Santiago Giménez",
     bestPlayerDetails: { name: "Santiago Giménez", jerseyColor: "#006847", number: "9", stats: "1 Goal, Rating 8.0", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/d/d8/Santiago_Gim%C3%A9nez.png" },
-    opponentBestPlayerDetails: { name: "Percy Tau", jerseyColor: "#000000", number: "10", stats: "1 Goal, Rating 7.8", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/7/70/Percy_Tau_2019.jpg" },
+    opponentBestPlayerDetails: { name: "Percy Tau", jerseyColor: "#000000", number: "10", stats: "1 Goal, Rating 7.8", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f7/Percy_Tau_in_2019_%28cropped%29.jpg" },
     details: "Opening fixture ended in a hard-fought draw at Estadio Azteca.",
     videoUrl: "https://www.youtube.com/embed/simulated-mex-rsa"
   }
@@ -343,15 +343,15 @@ const mockTopStatsData = {
     { rank: 3, name: "Lionel Messi", country: "Argentina 🇦🇷", value: "5 goals", subtext: "3 Assists, Rating 9.10", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg", jerseyColor: "#75AADB", number: "10" }
   ],
   assists: [
-    { rank: 1, name: "Lamine Yamal", country: "Spain 🇪🇸", value: "5 assists", subtext: "2 Goals, Rating 9.10", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b8/Lamine_Yamal_2024.jpg", jerseyColor: "#C1272D", number: "19" },
-    { rank: 2, name: "Antoine Griezmann", country: "France 🇫🇷", value: "4 assists", subtext: "1 Goal, Rating 8.50", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/a/ab/Antoine_Griezmann_2021_%28cropped%29.jpg", jerseyColor: "#002395", number: "7" }
+    { rank: 1, name: "Lamine Yamal", country: "Spain 🇪🇸", value: "5 assists", subtext: "2 Goals, Rating 9.10", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e3/Lamine_Yamal_in_2025.jpg", jerseyColor: "#C1272D", number: "19" },
+    { rank: 2, name: "Antoine Griezmann", country: "France 🇫🇷", value: "4 assists", subtext: "1 Goal, Rating 8.50", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/c/cf/Antoine_Griezmann_%2851100409504%29_%28cropped%29.jpg", jerseyColor: "#002395", number: "7" }
   ],
   cleanSheets: [
-    { rank: 1, name: "Mike Maignan", country: "France 🇫🇷", value: "4 clean sheets", subtext: "5 Matches, 15 Saves", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/2/23/Mike_Maignan_2021.jpg", jerseyColor: "#002395", number: "1" },
+    { rank: 1, name: "Mike Maignan", country: "France 🇫🇷", value: "4 clean sheets", subtext: "5 Matches, 15 Saves", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e1/Mike_Maignan_France_v_Norway_26_June_26-132_%28cropped%29.jpg", jerseyColor: "#002395", number: "1" },
     { rank: 2, name: "Emiliano Martínez", country: "Argentina 🇦🇷", value: "3 clean sheets", subtext: "5 Matches, 12 Saves", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg", jerseyColor: "#75AADB", number: "23" }
   ],
   discipline: [
-    { rank: 1, name: "Antonio Rüdiger", country: "Germany 🇩🇪", value: "3 yellow cards", subtext: "0 Red Cards, 8 Fouls", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/0/05/Antonio_Rüdiger_2020.jpg", jerseyColor: "#FFFFFF", number: "2" }
+    { rank: 1, name: "Antonio Rüdiger", country: "Germany 🇩🇪", value: "3 yellow cards", subtext: "0 Red Cards, 8 Fouls", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/7/72/Antonio_Rudiger_Ecuador_v_Germany_25_June_2026-055_%28cropped%29.jpg", jerseyColor: "#FFFFFF", number: "2" }
   ]
 };
 
@@ -460,6 +460,32 @@ function mapStatus(shortStatus) {
   return 'UPCOMING';
 }
 
+function computeMatchStatus(match, now = new Date()) {
+  if (match.status === 'LIVE') {
+    return 'LIVE';
+  }
+
+  const timePart = match.time ? match.time.split(' ')[0] : '18:00';
+  let matchDate = new Date(`${match.date} ${timePart}`);
+  if (isNaN(matchDate.getTime())) {
+    matchDate = new Date(match.date);
+  }
+  if (isNaN(matchDate.getTime())) {
+    return match.status || 'UPCOMING';
+  }
+
+  const diffMs = now.getTime() - matchDate.getTime();
+  const threeHoursMs = 3 * 60 * 60 * 1000;
+
+  if (diffMs > threeHoursMs) {
+    return 'COMPLETED';
+  } else if (diffMs >= 0 && diffMs <= threeHoursMs) {
+    return 'LIVE';
+  } else {
+    return 'UPCOMING';
+  }
+}
+
 export default async function handler(req, res) {
   if ((req.query && req.query.debug === 'dump') || (req.url && req.url.includes('debug=dump'))) {
     const todayStr = new Date().toISOString().split('T')[0];
@@ -556,7 +582,7 @@ export default async function handler(req, res) {
   if (!apiKey || currentQuota >= 90) {
     console.log(`[API-SPORTS] Serving simulated fallback. Key configured: ${!!apiKey}, dailyCallCount: ${currentQuota}/90`);
     return res.status(200).json({
-      matchesList: cachedFixtures || mockMatches,
+      matchesList: (cachedFixtures || mockMatches).map(m => ({ ...m, status: computeMatchStatus(m) })),
       allGroupsStandings: cachedStandings || mockAllGroupsStandings,
       topStatsData: cachedStats || mockTopStatsData,
       isSimulated: true,
@@ -777,7 +803,7 @@ export default async function handler(req, res) {
     }
 
     return res.status(200).json({
-      matchesList: cachedFixtures || mockMatches,
+      matchesList: (cachedFixtures || mockMatches).map(m => ({ ...m, status: computeMatchStatus(m) })),
       allGroupsStandings: cachedStandings || mockAllGroupsStandings,
       topStatsData: cachedStats || mockTopStatsData,
       isSimulated: hasError || (!cachedFixtures && !cachedStandings && !cachedStats),
@@ -798,7 +824,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('[API-SPORTS] Upstream error:', error);
     return res.status(200).json({
-      matchesList: cachedFixtures || mockMatches,
+      matchesList: (cachedFixtures || mockMatches).map(m => ({ ...m, status: computeMatchStatus(m) })),
       allGroupsStandings: cachedStandings || mockAllGroupsStandings,
       topStatsData: cachedStats || mockTopStatsData,
       isSimulated: true,

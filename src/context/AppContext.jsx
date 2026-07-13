@@ -1,5 +1,35 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
+export function computeMatchStatus(match, now = new Date(), liveDemoActive = false, selectedMatchId = '') {
+  if (liveDemoActive && match.id === selectedMatchId) {
+    return match.status;
+  }
+  
+  if (match.status === 'LIVE') {
+    return 'LIVE';
+  }
+
+  const timePart = match.time ? match.time.split(' ')[0] : '18:00';
+  let matchDate = new Date(`${match.date} ${timePart}`);
+  if (isNaN(matchDate.getTime())) {
+    matchDate = new Date(match.date);
+  }
+  if (isNaN(matchDate.getTime())) {
+    return match.status || 'UPCOMING';
+  }
+
+  const diffMs = now.getTime() - matchDate.getTime();
+  const threeHoursMs = 3 * 60 * 60 * 1000;
+
+  if (diffMs > threeHoursMs) {
+    return 'COMPLETED';
+  } else if (diffMs >= 0 && diffMs <= threeHoursMs) {
+    return 'LIVE';
+  } else {
+    return 'UPCOMING';
+  }
+}
+
 const AppContext = createContext();
 
 // Multilingual Dictionary for FIFA 2026
@@ -541,7 +571,12 @@ export const AppProvider = ({ children }) => {
 
   const [selectedMatchId, setSelectedMatchId] = useState("M1");
 
-  const activeMatch = matchesList.find(m => m.id === selectedMatchId) || matchesList[0];
+  const computedMatchesList = matchesList.map(m => ({
+    ...m,
+    status: computeMatchStatus(m, new Date(), liveDemoActive, selectedMatchId)
+  }));
+
+  const activeMatch = computedMatchesList.find(m => m.id === selectedMatchId) || computedMatchesList[0];
 
   // --- FULL 12 GROUPS STANDINGS (Group A to Group L) ---
   const initialAllGroupsStandings = {
@@ -1062,7 +1097,7 @@ export const AppProvider = ({ children }) => {
       settings,
       saveSettings,
       addEcoPoints,
-      matchesList,
+      matchesList: computedMatchesList,
       selectedMatchId,
       setSelectedMatchId,
       activeMatch,
