@@ -23,6 +23,7 @@ export default function DashboardHome() {
     setSelectedMatchId,
     liveDemoActive,
     setLiveDemoActive,
+    sportsDataLastUpdated,
     t
   } = useApp();
 
@@ -230,6 +231,7 @@ export default function DashboardHome() {
             zoneDensityOption={getZoneDensityOption()}
             sustainabilityOption={getSustainabilityOption()}
             transitOption={getTransitOption()}
+            sportsDataLastUpdated={sportsDataLastUpdated}
           />
         )}
       </ErrorBoundary>

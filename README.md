@@ -45,6 +45,23 @@ Configure these variables in your deployment settings (e.g. Vercel) or your loca
 | `SECURITY_PASSCODE` | Safe passcode required for administrative access | `MySecurePasscode2026` |
 | `ALLOWED_ORIGINS` | Comma-separated list of origins permitted to call API routes | `https://my-app.vercel.app,http://localhost:5173` |
 | `GEMINI_API_KEY` | Live Gemini model token for production queries | `AIzaSy...` |
+| `SPORTS_DATA_API_KEY` | Live API-SPORTS token for real-time tournament details | `your_api_sports_key` |
+
+---
+
+## Live Match Data Integration (API-SPORTS)
+
+ArenaAssist 2026 integrates real-time match fixtures, group standings, and player statistics from **API-SPORTS** (`v3.football.api-sports.io`).
+
+### Quota-Aware Architecture
+API-SPORTS has a free-tier limit of **100 requests/day**. To protect this quota and guarantee uptime:
+- **Serverless API Proxy (`api/sports-data.js`)**: All frontend requests go through this serverless route which acts as a cache layer.
+- **Server-Side Cache TTL**:
+  - Fixtures are cached for **20 minutes**.
+  - Group standings and top player statistics are cached for **60 minutes**.
+- **Daily Quota safety net**: The proxy tracks the number of real upstream requests made since UTC midnight. If the counter reaches **90 requests**, it automatically halts upstream calls and serves cached data or fallback mocks until the daily reset.
+- **Graceful Fallback**: If the API key is not configured, the daily quota is reached, or the upstream API responds with an error, the application automatically falls back to pre-packaged simulated tournament mock data and displays a **Simulated Data** badge in the Match Center header.
+- **Manual Refresh**: Users can trigger a manual update with the **Refresh** button inside the Match Center, which is safely protected by the server-side TTL.
 
 ---
 

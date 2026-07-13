@@ -544,7 +544,7 @@ export const AppProvider = ({ children }) => {
   const activeMatch = matchesList.find(m => m.id === selectedMatchId) || matchesList[0];
 
   // --- FULL 12 GROUPS STANDINGS (Group A to Group L) ---
-  const allGroupsStandings = {
+  const initialAllGroupsStandings = {
     "Group A": [
       { rank: 1, team: "Mexico 🇲🇽", played: 3, won: 2, drawn: 1, lost: 0, gd: 3, points: 7 },
       { rank: 2, team: "South Korea 🇰🇷", played: 3, won: 1, drawn: 2, lost: 0, gd: 2, points: 5 },
@@ -619,6 +619,8 @@ export const AppProvider = ({ children }) => {
     ]
   };
 
+  const [allGroupsStandings, setAllGroupsStandings] = useState(initialAllGroupsStandings);
+
   // Group Standings shortcut
   const groupStandings = [
     { rank: 1, team: "Morocco 🇲🇦", won: 3, drawn: 1, lost: 0, goalsFor: 9, goalsAgainst: 2, points: 10 },
@@ -630,7 +632,7 @@ export const AppProvider = ({ children }) => {
   ];
 
   // Top player statistics split by Goals, Assists, Clean Sheets, Discipline
-  const topStatsData = {
+  const initialTopStatsData = {
     goals: [
       { rank: 1, name: "Lionel Messi", country: "ARG 🇦🇷", value: "5 goals", subtext: "3 Assists, Rating 9.20", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/c/c1/Lionel_Messi_20180626.jpg", jerseyColor: "#74ACDF", number: "10" },
       { rank: 2, name: "Erling Haaland", country: "NOR 🇳🇴", value: "4 goals", subtext: "1 Assist, Rating 9.05", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/4/43/Erling_Haaland_Morocco_v_Norway_7_June_2026-51.jpg", jerseyColor: "#BA0C2F", number: "9" },
@@ -653,11 +655,37 @@ export const AppProvider = ({ children }) => {
     ]
   };
 
+  const [topStatsData, setTopStatsData] = useState(initialTopStatsData);
+  const [isSportsDataSimulated, setIsSportsDataSimulated] = useState(true);
+  const [sportsDataLastUpdated, setSportsDataLastUpdated] = useState(null);
+
+  const refreshSportsData = async () => {
+    try {
+      const origin = typeof window !== 'undefined' ? window.location.origin : 'http://localhost';
+      const res = await fetch(`${origin}/api/sports-data`);
+      if (!res.ok) throw new Error('API-SPORTS status error');
+      const data = await res.json();
+      if (data.matchesList) setMatchesList(data.matchesList);
+      if (data.allGroupsStandings) setAllGroupsStandings(data.allGroupsStandings);
+      if (data.topStatsData) setTopStatsData(data.topStatsData);
+      setIsSportsDataSimulated(!!data.isSimulated);
+      setSportsDataLastUpdated(data.lastUpdated);
+    } catch (err) {
+      console.warn('Failed to fetch live sports data, falling back to simulated:', err);
+      setIsSportsDataSimulated(true);
+      setSportsDataLastUpdated(Date.now());
+    }
+  };
+
+  useEffect(() => {
+    refreshSportsData();
+  }, []);
+
   const topPlayersStats = topStatsData.goals;
 
   // --- Live match updates simulation engine ---
   useEffect(() => {
-    if (!liveDemoActive) return;
+    if (!liveDemoActive || settings.apiMode !== 'simulated') return;
 
     const scoreInterval = setInterval(() => {
       setMatchesList(prevList => {
@@ -1044,6 +1072,9 @@ export const AppProvider = ({ children }) => {
       topPlayersStats,
       liveDemoActive,
       setLiveDemoActive,
+      isSportsDataSimulated,
+      sportsDataLastUpdated,
+      refreshSportsData,
       simulatorAct,
       setSimulatorAct,
       telemetry,

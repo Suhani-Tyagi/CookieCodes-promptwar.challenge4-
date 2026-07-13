@@ -21,10 +21,16 @@ export default function OrganizerDashboardView({
   gateFlowOption,
   zoneDensityOption,
   sustainabilityOption,
-  transitOption
+  transitOption,
+  sportsDataLastUpdated
 }) {
   return (
     <div className="space-y-6 animate-fade-in">
+      {sportsDataLastUpdated && (
+        <div className="text-right text-xs text-zinc-400 dark:text-zinc-500">
+          Sports Data Last Updated: {new Date(sportsDataLastUpdated).toLocaleTimeString()}
+        </div>
+      )}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-5 bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-xl flex items-center justify-between shadow-sm">
           <div className="space-y-1">

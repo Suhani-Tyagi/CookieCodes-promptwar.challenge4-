@@ -16,7 +16,10 @@ export default function MatchCenter() {
     allGroupsStandings,
     topStatsData,
     liveDemoActive,
-    setLiveDemoActive 
+    setLiveDemoActive,
+    isSportsDataSimulated,
+    sportsDataLastUpdated,
+    refreshSportsData
   } = useApp();
 
   const [sportsTab, setSportsTab] = useState('matches');
@@ -56,29 +59,51 @@ export default function MatchCenter() {
       {/* Header section with live demo switch */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-zinc-200 dark:border-zinc-800 pb-4">
         <div>
-          <h2 className="text-2xl font-black tracking-tight">FIFA World Cup 2026 Match Center</h2>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h2 className="text-2xl font-black tracking-tight">FIFA World Cup 2026 Match Center</h2>
+            {isSportsDataSimulated && (
+              <span className="text-[10px] bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-400 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
+                Simulated Data
+              </span>
+            )}
+          </div>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
             Real-time live scores, brackets, standings, and player statistics.
+            {sportsDataLastUpdated && (
+              <span className="ml-2 text-[10px] text-zinc-400 dark:text-zinc-500">
+                (Last updated: {new Date(sportsDataLastUpdated).toLocaleTimeString()})
+              </span>
+            )}
           </p>
         </div>
 
-        <div className="flex items-center gap-3 bg-zinc-100 dark:bg-zinc-900 px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 text-xs">
-          <Tv className="w-4 h-4 text-emerald-500" />
-          <div className="leading-tight">
-            <span className="block font-bold">Simulate Live Match</span>
-            <span className="text-[9px] text-zinc-450">Toggles live scoring demo</span>
-          </div>
+        <div className="flex items-center gap-3">
           <button
-            onClick={() => setLiveDemoActive(!liveDemoActive)}
-            aria-label="Toggle live scoring simulation"
-            className={`w-10 h-6 rounded-full transition-all relative ${
-              liveDemoActive ? 'bg-emerald-600' : 'bg-zinc-300 dark:bg-zinc-800'
-            }`}
+            onClick={() => refreshSportsData()}
+            className="px-3 py-2 text-xs font-bold text-zinc-700 dark:text-zinc-300 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl hover:bg-zinc-50 dark:hover:bg-zinc-800 transition"
+            aria-label="Refresh match data"
           >
-            <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-all ${
-              liveDemoActive ? 'translate-x-4' : 'translate-x-0'
-            }`}></span>
+            <span>🔄 Refresh</span>
           </button>
+
+          <div className="flex items-center gap-3 bg-zinc-100 dark:bg-zinc-900 px-3 py-2 rounded-xl border border-zinc-200 dark:border-zinc-800 text-xs">
+            <Tv className="w-4 h-4 text-emerald-500" />
+            <div className="leading-tight">
+              <span className="block font-bold">Simulate Live Match</span>
+              <span className="text-[9px] text-zinc-400">Toggles live scoring demo</span>
+            </div>
+            <button
+              onClick={() => setLiveDemoActive(!liveDemoActive)}
+              aria-label="Toggle live scoring simulation"
+              className={`w-10 h-6 rounded-full transition-all relative ${
+                liveDemoActive ? 'bg-emerald-600' : 'bg-zinc-300 dark:bg-zinc-800'
+              }`}
+            >
+              <span className={`absolute top-1 left-1 w-4 h-4 rounded-full bg-white transition-all ${
+                liveDemoActive ? 'translate-x-4' : 'translate-x-0'
+              }`}></span>
+            </button>
+          </div>
         </div>
       </div>
 
