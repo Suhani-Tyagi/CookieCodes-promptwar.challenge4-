@@ -1,35 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { getRelativeMatchDate, MATCH_OFFSETS } from '../utils/relativeMatchDates.js';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { getRelativeMatchDate, MATCH_OFFSETS, mockMatches } from '../utils/relativeMatchDates.js';
+import { computeMatchStatus } from '../utils/matchStatus.js';
 
-export function computeMatchStatus(match, now = new Date(), liveDemoActive = false, selectedMatchId = '') {
-  if (liveDemoActive && match.id === selectedMatchId) {
-    return match.status;
-  }
-  
-  if (match.status === 'LIVE') {
-    return 'LIVE';
-  }
-
-  const timePart = match.time ? match.time.split(' ')[0] : '18:00';
-  let matchDate = new Date(`${match.date} ${timePart}`);
-  if (isNaN(matchDate.getTime())) {
-    matchDate = new Date(match.date);
-  }
-  if (isNaN(matchDate.getTime())) {
-    return match.status || 'UPCOMING';
-  }
-
-  const diffMs = now.getTime() - matchDate.getTime();
-  const threeHoursMs = 3 * 60 * 60 * 1000;
-
-  if (diffMs > threeHoursMs) {
-    return 'COMPLETED';
-  } else if (diffMs >= 0 && diffMs <= threeHoursMs) {
-    return 'LIVE';
-  } else {
-    return 'UPCOMING';
-  }
-}
+export { computeMatchStatus };
 
 const AppContext = createContext();
 
@@ -262,322 +235,20 @@ export const AppProvider = ({ children }) => {
   const [liveDemoActive, setLiveDemoActive] = useState(false);
 
   // --- COMPREHENSIVE MATCH DATABASE (Group stage to QFs) ---
-  const [matchesList, setMatchesList] = useState([
-    {
-      id: "M1",
-      teamA: "France",
-      teamAFlag: "🇫🇷",
-      teamB: "Morocco",
-      teamBFlag: "🇲🇦",
-      teamAColors: { primary: "#002395", secondary: "#ED2939", accent: "#FFFFFF", name: "France Royal Blue" },
-      teamBColors: { primary: "#006241", secondary: "#C1272D", accent: "#FFFFFF", name: "Morocco Green & Red" },
-      time: MATCH_OFFSETS.M1.time,
-      date: getRelativeMatchDate("M1"),
-      stadium: "Boston Stadium, Boston",
-      status: "UPCOMING",
-      minute: "QF 1",
-      scoreA: 0,
-      scoreB: 0,
-      events: [],
-      bestPlayer: "Kylian Mbappé",
-      bestPlayerDetails: {
-        name: "Kylian Mbappé",
-        jerseyColor: "#002395",
-        number: "10",
-        stats: "3 Goals in Tournament, Rating 8.9",
-        photoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e5/Kylian_Mbappé_2018.jpg"
-      },
-      opponentBestPlayerDetails: {
-        name: "Hakim Ziyech",
-        jerseyColor: "#006241",
-        number: "7",
-        stats: "3 Goals, 2 Assists, Rating 8.6",
-        photoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e1/Hakim_Ziyech_2021.jpg"
-      },
-      details: "Quarter-Final match 1 at Boston Stadium."
-    },
-    {
-      id: "M2",
-      teamA: "Spain",
-      teamAFlag: "🇪🇸",
-      teamB: "Belgium",
-      teamBFlag: "🇧🇪",
-      teamAColors: { primary: "#C1272D", secondary: "#FEDF00", accent: "#002395", name: "Spain Red & Gold" },
-      teamBColors: { primary: "#000000", secondary: "#DD0000", accent: "#FEDF00", name: "Belgium Black & Red" },
-      time: MATCH_OFFSETS.M2.time,
-      date: getRelativeMatchDate("M2"),
-      stadium: "Los Angeles Stadium, LA",
-      status: "UPCOMING",
-      minute: "QF 2",
-      scoreA: 0,
-      scoreB: 0,
-      events: [],
-      bestPlayer: "Dani Olmo",
-      bestPlayerDetails: { 
-        name: "Dani Olmo", 
-        jerseyColor: "#C1272D", 
-        number: "10", 
-        stats: "1 Goal, 2 Assists, Rating 8.7",
-        photoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Dani_Olmo_2022.jpg"
-      },
-      opponentBestPlayerDetails: { 
-        name: "Kevin De Bruyne", 
-        jerseyColor: "#000000", 
-        number: "7", 
-        stats: "3 Goals, 4 Assists, Rating 8.9",
-        photoUrl: "https://upload.wikimedia.org/wikipedia/commons/4/40/Kevin_De_Bruyne_USMNT_v_Belgium_Mar_28_2026-64_%28cropped%29.jpg"
-      },
-      details: "Quarter-Final match 2 at SoFi Stadium."
-    },
-    {
-      id: "M3",
-      teamA: "Norway",
-      teamAFlag: "🇳🇴",
-      teamB: "England",
-      teamBFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      teamAColors: { primary: "#BA0C2F", secondary: "#00205B", accent: "#FFFFFF", name: "Norway Red & Blue" },
-      teamBColors: { primary: "#FFFFFF", secondary: "#CF0820", accent: "#00205B", name: "England White & Red" },
-      time: MATCH_OFFSETS.M3.time,
-      date: getRelativeMatchDate("M3"),
-      stadium: "Miami Stadium, Miami",
-      status: "UPCOMING",
-      minute: "QF 3",
-      scoreA: 0,
-      scoreB: 0,
-      events: [],
-      bestPlayer: "Erling Haaland",
-      bestPlayerDetails: { 
-        name: "Erling Haaland", 
-        jerseyColor: "#BA0C2F", 
-        number: "9", 
-        stats: "4 Goals, Rating 9.0",
-        photoUrl: "https://upload.wikimedia.org/wikipedia/commons/4/43/Erling_Haaland_Morocco_v_Norway_7_June_2026-51.jpg"
-      },
-      opponentBestPlayerDetails: { 
-        name: "Jude Bellingham", 
-        jerseyColor: "#FFFFFF", 
-        number: "10", 
-        stats: "2 Goals, 3 Assists, Rating 8.5",
-        photoUrl: "https://upload.wikimedia.org/wikipedia/commons/2/23/Jude_Bellingham_England_v_Ghana_23_June_2026-061_%28cropped%29.jpg"
-      },
-      details: "Quarter-Final match 3 at Hard Rock Stadium."
-    },
-    {
-      id: "M4",
-      teamA: "Argentina",
-      teamAFlag: "🇦🇷",
-      teamB: "Switzerland",
-      teamBFlag: "🇨🇭",
-      teamAColors: { primary: "#74ACDF", secondary: "#FFFFFF", accent: "#74ACDF", name: "Argentina Stripes" },
-      teamBColors: { primary: "#D52B1E", secondary: "#FFFFFF", accent: "#D52B1E", name: "Switzerland Red" },
-      time: MATCH_OFFSETS.M4.time,
-      date: getRelativeMatchDate("M4"),
-      stadium: "Kansas City Stadium, KC",
-      status: "UPCOMING",
-      minute: "QF 4",
-      scoreA: 0,
-      scoreB: 0,
-      events: [],
-      bestPlayer: "Lionel Messi",
-      bestPlayerDetails: { 
-        name: "Lionel Messi", 
-        jerseyColor: "#74ACDF", 
-        number: "10", 
-        stats: "5 Goals, 3 Assists, Rating 9.2",
-        photoUrl: "https://upload.wikimedia.org/wikipedia/commons/c/c1/Lionel_Messi_20180626.jpg"
-      },
-      opponentBestPlayerDetails: { 
-        name: "Granit Xhaka", 
-        jerseyColor: "#D52B1E", 
-        number: "10", 
-        stats: "Rating 8.2",
-        photoUrl: "https://upload.wikimedia.org/wikipedia/commons/0/01/Granit_Xhaka_%28cropped%29.jpg"
-      },
-      details: "Quarter-Final match 4 at Arrowhead Stadium."
-    },
-    // Concluded matches (Round of 16 results)
-    {
-      id: "M5",
-      teamA: "Morocco",
-      teamAFlag: "🇲🇦",
-      teamB: "Canada",
-      teamBFlag: "🇨🇦",
-      teamAColors: { primary: "#006241", secondary: "#C1272D", accent: "#FFFFFF", name: "Morocco Green" },
-      teamBColors: { primary: "#FF0000", secondary: "#FFFFFF", accent: "#FF0000", name: "Canada Red" },
-      time: MATCH_OFFSETS.M5.time,
-      date: getRelativeMatchDate("M5"),
-      stadium: "BMO Field, Toronto",
-      status: "COMPLETED",
-      minute: "Round of 16",
-      scoreA: 3,
-      scoreB: 0,
-      events: [
-        { minute: "14'", player: "Y. En-Nesyri (MAR)", type: "Goal" },
-        { minute: "32'", player: "Hakim Ziyech (MAR)", type: "Goal" },
-        { minute: "75'", player: "S. Amallah (MAR)", type: "Goal" }
-      ],
-      bestPlayer: "Hakim Ziyech",
-      bestPlayerDetails: { name: "Hakim Ziyech", jerseyColor: "#006241", number: "7", stats: "1 Goal, 1 Assist, Rating 9.0", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e1/Hakim_Ziyech_2021.jpg" },
-      opponentBestPlayerDetails: { name: "Alphonso Davies", jerseyColor: "#FF0000", number: "19", stats: "3 Dribbles, Rating 6.8", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/2/27/Alphonso_Davies_Canada_v_Qatar_18_June_2026-007_%28cropped%29.jpg" },
-      details: "Morocco cruised into the Quarter-Finals with a stellar 3-0 performance.",
-      videoUrl: "https://www.youtube.com/embed/simulated-mor-can"
-    },
-    {
-      id: "M6",
-      teamA: "Norway",
-      teamAFlag: "🇳🇴",
-      teamB: "Brazil",
-      teamBFlag: "🇧🇷",
-      teamAColors: { primary: "#BA0C2F", secondary: "#00205B", accent: "#FFFFFF", name: "Norway Red" },
-      teamBColors: { primary: "#FEDF00", secondary: "#009B3A", accent: "#00205B", name: "Brazil Gold" },
-      time: MATCH_OFFSETS.M6.time,
-      date: getRelativeMatchDate("M6"),
-      stadium: "MetLife Stadium, NJ",
-      status: "COMPLETED",
-      minute: "Round of 16",
-      scoreA: 2,
-      scoreB: 1,
-      events: [
-        { minute: "22'", player: "Erling Haaland (NOR)", type: "Goal" },
-        { minute: "54'", player: "Vinícius Júnior (BRA)", type: "Goal" },
-        { minute: "89'", player: "Erling Haaland (NOR)", type: "Goal" }
-      ],
-      bestPlayer: "Erling Haaland",
-      bestPlayerDetails: { name: "Erling Haaland", jerseyColor: "#BA0C2F", number: "9", stats: "2 Goals, 5 Shots, Rating 9.3", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/4/43/Erling_Haaland_Morocco_v_Norway_7_June_2026-51.jpg" },
-      opponentBestPlayerDetails: { name: "Vinícius Júnior", jerseyColor: "#FEDF00", number: "7", stats: "1 Goal, Rating 7.9", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/1/10/Vin%C3%ADcius_J%C3%BAnior_Brazil_V_Morocco_13_June_2026-207_%28cropped%29.jpg" },
-      details: "Haaland's brace knocks out Brazil in a historic victory.",
-      videoUrl: "https://www.youtube.com/embed/simulated-nor-bra"
-    },
-    {
-      id: "M7",
-      teamA: "Spain",
-      teamAFlag: "🇪🇸",
-      teamB: "Portugal",
-      teamBFlag: "🇵🇹",
-      teamAColors: { primary: "#C1272D", secondary: "#FEDF00", accent: "#002395", name: "Spain Red" },
-      teamBColors: { primary: "#006600", secondary: "#FF0000", accent: "#FFFFFF", name: "Portugal Red" },
-      time: MATCH_OFFSETS.M7.time,
-      date: getRelativeMatchDate("M7"),
-      stadium: "Hard Rock Stadium, Miami",
-      status: "COMPLETED",
-      minute: "Round of 16",
-      scoreA: 1,
-      scoreB: 0,
-      events: [
-        { minute: "68'", player: "Dani Olmo (ESP)", type: "Goal" }
-      ],
-      bestPlayer: "Dani Olmo",
-      bestPlayerDetails: { name: "Dani Olmo", jerseyColor: "#C1272D", number: "10", stats: "1 Goal, 2 Key Passes, Rating 8.7", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/e/e0/Dani_Olmo_2022.jpg" },
-      opponentBestPlayerDetails: { name: "Cristiano Ronaldo", jerseyColor: "#006600", number: "7", stats: "2 Shots, Rating 6.9", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/6/67/Cristiano_Ronaldo_2275_%28cropped%29.jpg" },
-      details: "Spain edges out Portugal in an intense Iberian Derby.",
-      videoUrl: "https://www.youtube.com/embed/simulated-esp-por"
-    },
-    {
-      id: "M8",
-      teamA: "England",
-      teamAFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-      teamB: "Mexico",
-      teamBFlag: "🇲🇽",
-      teamAColors: { primary: "#FFFFFF", secondary: "#CF0820", accent: "#00205B", name: "England White" },
-      teamBColors: { primary: "#006847", secondary: "#D00C27", accent: "#FFFFFF", name: "Mexico Green" },
-      time: MATCH_OFFSETS.M8.time,
-      date: getRelativeMatchDate("M8"),
-      stadium: "Gillette Stadium, Boston",
-      status: "COMPLETED",
-      minute: "Round of 16",
-      scoreA: 3,
-      scoreB: 2,
-      events: [
-        { minute: "15'", player: "H. Kane (ENG)", type: "Goal" },
-        { minute: "34'", player: "S. Giménez (MEX)", type: "Goal" },
-        { minute: "48'", player: "J. Bellingham (ENG)", type: "Goal" },
-        { minute: "72'", player: "H. Martin (MEX)", type: "Goal" },
-        { minute: "87'", player: "B. Saka (ENG)", type: "Goal" }
-      ],
-      bestPlayer: "Jude Bellingham",
-      bestPlayerDetails: { name: "Jude Bellingham", jerseyColor: "#FFFFFF", number: "10", stats: "1 Goal, 1 Assist, Rating 8.8", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/2/23/Jude_Bellingham_England_v_Ghana_23_June_2026-061_%28cropped%29.jpg" },
-      opponentBestPlayerDetails: { name: "Santiago Giménez", jerseyColor: "#006847", number: "9", stats: "1 Goal, Rating 7.5", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/d/d8/Santiago_Gim%C3%A9nez.png" },
-      details: "A dramatic 5-goal thriller ended by Bukayo Saka's late strike.",
-      videoUrl: "https://www.youtube.com/embed/simulated-eng-mex"
-    },
-    {
-      id: "M9",
-      teamA: "Belgium",
-      teamAFlag: "🇧🇪",
-      teamB: "USA",
-      teamBFlag: "🇺🇸",
-      time: MATCH_OFFSETS.M9.time,
-      date: getRelativeMatchDate("M9"),
-      stadium: "SoFi Stadium, Los Angeles",
-      status: "COMPLETED",
-      minute: "Round of 16",
-      scoreA: 4,
-      scoreB: 1,
-      teamAColors: { primary: "#000000", secondary: "#DD0000", accent: "#FEDF00", name: "Belgium Black" },
-      teamBColors: { primary: "#0A3161", secondary: "#B31942", accent: "#FFFFFF", name: "USA Blue & Red" },
-      events: [
-        { minute: "8'", player: "R. Lukaku (BEL)", type: "Goal" },
-        { minute: "24'", player: "K. De Bruyne (BEL)", type: "Goal" }
-      ],
-      bestPlayer: "Kevin De Bruyne",
-      bestPlayerDetails: { name: "Kevin De Bruyne", jerseyColor: "#000000", number: "7", stats: "1 Goal, 2 Assists, Rating 9.4", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/4/40/Kevin_De_Bruyne_USMNT_v_Belgium_Mar_28_2026-64_%28cropped%29.jpg" },
-      opponentBestPlayerDetails: { name: "Christian Pulisic", jerseyColor: "#0A3161", number: "10", stats: "1 Goal, Rating 7.2", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/7/71/Christian_Pulisic_USMNT_v_Belgium_Mar_28_2026-73_%28cropped%29.jpg" },
-      details: "Belgium outclassed the USA with De Bruyne dictating the play.",
-      videoUrl: "https://www.youtube.com/embed/simulated-bel-usa"
-    },
-    // Preloaded Group stage matches
-    {
-      id: "M13",
-      teamA: "Mexico",
-      teamAFlag: "🇲🇽",
-      teamB: "South Africa",
-      teamBFlag: "🇿🇦",
-      time: MATCH_OFFSETS.M13.time,
-      date: getRelativeMatchDate("M13"),
-      stadium: "Estadio Azteca, Mexico City",
-      status: "COMPLETED",
-      minute: "Group A",
-      scoreA: 2,
-      scoreB: 1,
-      teamAColors: { primary: "#006847", secondary: "#D00C27", accent: "#FFFFFF", name: "Mexico Green" },
-      teamBColors: { primary: "#007A33", secondary: "#F2A900", accent: "#FFFFFF", name: "South Africa Gold" },
-      events: [{ minute: "12'", player: "S. Giménez (MEX)", type: "Goal" }, { minute: "88'", player: "H. Martin (MEX)", type: "Goal" }],
-      bestPlayer: "Santiago Giménez",
-      bestPlayerDetails: { name: "Santiago Giménez", jerseyColor: "#006847", number: "9", stats: "1 Goal, Rating 8.2", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/d/d8/Santiago_Gim%C3%A9nez.png" },
-      opponentBestPlayerDetails: { name: "Percy Tau", jerseyColor: "#007A33", number: "10", stats: "Rating 7.0", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/f/f7/Percy_Tau_in_2019_%28cropped%29.jpg" },
-      details: "Tournament opener in Mexico City."
-    },
-    {
-      id: "M14",
-      teamA: "United States",
-      teamAFlag: "🇺🇸",
-      teamB: "Paraguay",
-      teamBFlag: "🇵🇾",
-      time: MATCH_OFFSETS.M14.time,
-      date: getRelativeMatchDate("M14"),
-      stadium: "SoFi Stadium, Los Angeles",
-      status: "COMPLETED",
-      minute: "Group D",
-      scoreA: 1,
-      scoreB: 1,
-      teamAColors: { primary: "#0A3161", secondary: "#B31942", accent: "#FFFFFF", name: "USA Blue & Red" },
-      teamBColors: { primary: "#D52B1E", secondary: "#0038A8", accent: "#FFFFFF", name: "Paraguay Stripes" },
-      events: [{ minute: "41'", player: "C. Pulisic (USA)", type: "Goal" }],
-      bestPlayer: "Christian Pulisic",
-      bestPlayerDetails: { name: "Christian Pulisic", jerseyColor: "#0A3161", number: "10", stats: "1 Goal, Rating 8.0", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/7/71/Christian_Pulisic_USMNT_v_Belgium_Mar_28_2026-73_%28cropped%29.jpg" },
-      opponentBestPlayerDetails: { name: "Miguel Almirón", jerseyColor: "#D52B1E", number: "10", stats: "Rating 7.8", photoUrl: "https://upload.wikimedia.org/wikipedia/commons/1/19/Miguel_Almir%C3%B3n_Red_Bull_Atlanta_5.31.25-069_%28cropped%29.jpg" },
-      details: "USA's opening Group D match."
-    }
-  ]);
+  const [matchesList, setMatchesList] = useState(mockMatches);
 
   const [selectedMatchId, setSelectedMatchId] = useState("M1");
 
-  const computedMatchesList = matchesList.map(m => ({
-    ...m,
-    status: computeMatchStatus(m, new Date(), liveDemoActive, selectedMatchId)
-  }));
+  const computedMatchesList = useMemo(() => {
+    return matchesList.map(m => ({
+      ...m,
+      status: computeMatchStatus(m, new Date(), liveDemoActive, selectedMatchId)
+    }));
+  }, [matchesList, liveDemoActive, selectedMatchId]);
 
-  const activeMatch = computedMatchesList.find(m => m.id === selectedMatchId) || computedMatchesList[0];
+  const activeMatch = useMemo(() => {
+    return computedMatchesList.find(m => m.id === selectedMatchId) || computedMatchesList[0];
+  }, [computedMatchesList, selectedMatchId]);
 
   // --- FULL 12 GROUPS STANDINGS (Group A to Group L) ---
   const initialAllGroupsStandings = {
@@ -814,16 +485,16 @@ export const AppProvider = ({ children }) => {
     }
   }, [userProfile]);
 
-  const t = (key) => {
+  const t = useCallback((key) => {
     const langDict = translations[language] || translations['en'];
     return langDict[key] || translations['en'][key] || key;
-  };
+  }, [language]);
 
-  const toggleTheme = () => {
+  const toggleTheme = useCallback(() => {
     setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  };
+  }, []);
 
-  const addComplaint = (newComplaint) => {
+  const addComplaint = useCallback((newComplaint) => {
     const id = `INC-2026-${Math.floor(100 + Math.random() * 900)}`;
     const fresh = {
       id,
@@ -851,9 +522,9 @@ export const AppProvider = ({ children }) => {
       },
       ...prev
     ]);
-  };
+  }, []);
 
-  const updateComplaintStatus = (id, newStatus, detail, resolution = "") => {
+  const updateComplaintStatus = useCallback((id, newStatus, detail, resolution = "") => {
     setComplaints(prev => prev.map(c => {
       if (c.id === id) {
         const updatedTimeline = [...c.timeline, {
@@ -870,27 +541,27 @@ export const AppProvider = ({ children }) => {
       }
       return c;
     }));
-  };
+  }, []);
 
-  const saveSettings = (newSettings) => {
+  const saveSettings = useCallback((newSettings) => {
     setSettings(newSettings);
     try {
       localStorage.setItem('gemini_api_mode', newSettings.apiMode);
     } catch (e) {
       console.warn("gemini_api_mode localStorage sync failed:", e);
     }
-  };
+  }, []);
 
-  const dismissNotification = (id) => {
+  const dismissNotification = useCallback((id) => {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, active: false } : n));
-  };
+  }, []);
 
-  const addEcoPoints = (points) => {
+  const addEcoPoints = useCallback((points) => {
     setUserProfile(prev => ({
       ...prev,
       ecoPoints: (prev.ecoPoints || 0) + points
     }));
-  };
+  }, []);
 
   // Live Storyline Simulator States
   const [simulatorAct, setSimulatorAct] = useState(1);
@@ -1018,41 +689,44 @@ export const AppProvider = ({ children }) => {
         nextTelemetry = {
           gateCWait: 2,
           gateDWait: 2,
-          gateBWait: 3,
-          activeVisitors: 78500,
-          heatmapSpots: [{ x: 380, y: 180, intensity: 0.9, label: 'Security Alert' }],
+          gateBWait: 2,
+          activeVisitors: 45200,
+          heatmapSpots: [{ x: 180, y: 220, intensity: 0.85, label: 'Gate B Security Checkpoint' }],
           routingPath: null,
-          volunteerTasks: [{ id: 'task-2', title: 'Replenish Eco-Cup supplies at Stand 2', status: 'Completed', priority: 'Low' }],
-          medicalTriage: [{ id: 'med-1', name: 'John Doe (Block 102)', issue: 'Heat Exhaustion', priority: 'Green', status: 'Treated and Stable' }],
-          securityIncidents: [{ id: 'sec-1', type: 'Unattended Object', details: 'Black backpack near Gate C bench', severity: 'Critical', status: 'Drone Alert Triggered' }],
-          droneStatus: 'Hovering / Scanning',
-          droneReport: 'Scanning backpack... analyzing thermal & depth signatures...'
+          volunteerTasks: [
+            { id: 'task-5', title: 'Security support Gate B', status: 'In Progress', priority: 'Medium' }
+          ],
+          medicalTriage: [],
+          securityIncidents: [{ id: 'sec-1', type: 'Prohibited Item', location: 'Gate B Scanner 2', details: 'Confiscated laser pointer', status: 'Active' }],
+          droneStatus: 'Monitoring Gate B',
+          droneReport: 'Gate B security checkpoint operations standard. Alert flag raised for Laser Point.'
         };
-        notiText = "Act 7: Security Alert: Unattended object detected near Gate C.";
+        notiText = "Act 7: Security alert. Prohibited item confiscated at Gate B scanner.";
         break;
       case 8:
-        nextTelemetry = {
-          gateCWait: 2,
-          gateDWait: 2,
-          gateBWait: 3,
-          activeVisitors: 82100,
-          heatmapSpots: [{ x: 380, y: 180, intensity: 0.2, label: 'Clear' }],
-          routingPath: null,
-          volunteerTasks: [],
-          medicalTriage: [{ id: 'med-1', name: 'John Doe (Block 102)', issue: 'Heat Exhaustion', priority: 'Green', status: 'Treated and Stable' }],
-          securityIncidents: [{ id: 'sec-1', type: 'Unattended Object', details: 'Black backpack near Gate C bench', severity: 'Low', status: 'Resolved (Personal Gear Cleared)' }],
-          droneStatus: 'Returning',
-          droneReport: 'Threat assessment: Normal. Object identified as gym bag. Incident resolved.'
-        };
-        notiText = "Act 8: Threat resolved. Drone scan confirms harmless gym gear.";
-        break;
-      case 9:
-      default:
         nextTelemetry = {
           gateCWait: 1,
           gateDWait: 1,
           gateBWait: 1,
-          activeVisitors: 15000,
+          activeVisitors: 45200,
+          heatmapSpots: [],
+          routingPath: null,
+          volunteerTasks: [
+            { id: 'task-5', title: 'Security support Gate B', status: 'Completed', priority: 'Medium' }
+          ],
+          medicalTriage: [],
+          securityIncidents: [{ id: 'sec-1', type: 'Prohibited Item', location: 'Gate B Scanner 2', details: 'Confiscated laser pointer', status: 'Resolved' }],
+          droneStatus: 'Stationary',
+          droneReport: ''
+        };
+        notiText = "Act 8: Security incident resolved. Fan released with warning. Laser confiscated.";
+        break;
+      case 9:
+        nextTelemetry = {
+          gateCWait: 1,
+          gateDWait: 1,
+          gateBWait: 1,
+          activeVisitors: 450,
           heatmapSpots: [],
           routingPath: null,
           volunteerTasks: [],
@@ -1078,46 +752,72 @@ export const AppProvider = ({ children }) => {
     ]);
   };
 
+  const providerValue = useMemo(() => ({
+    activeTab,
+    setActiveTab,
+    language,
+    setLanguage,
+    theme,
+    toggleTheme,
+    userProfile,
+    setUserProfile,
+    complaints,
+    addComplaint,
+    updateComplaintStatus,
+    chatHistory,
+    setChatHistory,
+    notifications,
+    dismissNotification,
+    settings,
+    saveSettings,
+    addEcoPoints,
+    matchesList: computedMatchesList,
+    selectedMatchId,
+    setSelectedMatchId,
+    activeMatch,
+    groupStandings,
+    allGroupsStandings,
+    topStatsData,
+    topPlayersStats,
+    liveDemoActive,
+    setLiveDemoActive,
+    isSportsDataSimulated,
+    sportsDataLastUpdated,
+    refreshSportsData,
+    simulatorAct,
+    setSimulatorAct,
+    telemetry,
+    setTelemetry,
+    triggerSimulatorAct,
+    t
+  }), [
+    activeTab,
+    language,
+    theme,
+    userProfile,
+    complaints,
+    chatHistory,
+    notifications,
+    settings,
+    computedMatchesList,
+    selectedMatchId,
+    activeMatch,
+    groupStandings,
+    allGroupsStandings,
+    topStatsData,
+    topPlayersStats,
+    liveDemoActive,
+    isSportsDataSimulated,
+    sportsDataLastUpdated,
+    refreshSportsData,
+    simulatorAct,
+    telemetry,
+    triggerSimulatorAct,
+    t
+  ]);
+
   return (
-    <AppContext.Provider value={{
-      activeTab,
-      setActiveTab,
-      language,
-      setLanguage,
-      theme,
-      toggleTheme,
-      userProfile,
-      setUserProfile,
-      complaints,
-      addComplaint,
-      updateComplaintStatus,
-      chatHistory,
-      setChatHistory,
-      notifications,
-      dismissNotification,
-      settings,
-      saveSettings,
-      addEcoPoints,
-      matchesList: computedMatchesList,
-      selectedMatchId,
-      setSelectedMatchId,
-      activeMatch,
-      groupStandings,
-      allGroupsStandings,
-      topStatsData,
-      topPlayersStats,
-      liveDemoActive,
-      setLiveDemoActive,
-      isSportsDataSimulated,
-      sportsDataLastUpdated,
-      refreshSportsData,
-      simulatorAct,
-      setSimulatorAct,
-      telemetry,
-      setTelemetry,
-      triggerSimulatorAct,
-      t
-    }}>
+    <AppContext.Provider value={providerValue}>
       {children}
     </AppContext.Provider>
   );

@@ -1,5 +1,8 @@
-export function computeMatchStatus(match, now = new Date()) {
+export function computeMatchStatus(match, now = new Date(), liveDemoActive = false, selectedMatchId = '') {
   if (!match) return 'UPCOMING';
+  if (liveDemoActive && match.id === selectedMatchId) {
+    return match.status;
+  }
   if (match.status === 'LIVE') {
     return 'LIVE';
   }
