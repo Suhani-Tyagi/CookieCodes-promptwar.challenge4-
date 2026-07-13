@@ -29,7 +29,7 @@ const STANDINGS_TTL_SECS = 60 * 60; // 60 minutes
 const STATS_TTL_SECS = 60 * 60; // 60 minutes
 // Hardcoded World Cup League ID for API-SPORTS (World Cup is league 1)
 const LEAGUE_ID = 1;
-const SEASON = 2022;
+const SEASON = 2026;
 
 // Mock Fallback Data matching AppContext expected shapes
 const mockMatches = [
@@ -509,6 +509,7 @@ export default async function handler(req, res) {
   let standingsTime = now;
   let statsTime = now;
   let currentQuota = 0;
+  let fallbackReason = '';
 
   try {
     const fixturesCacheVal = await kv.get('sports_fixtures');
@@ -589,6 +590,12 @@ export default async function handler(req, res) {
           const fixturesRes = await fetch(`https://v3.football.api-sports.io/fixtures?league=${LEAGUE_ID}&season=${SEASON}`, { headers });
           const fixturesData = await fixturesRes.json();
           
+          if (fixturesData.errors && Object.keys(fixturesData.errors).length > 0) {
+            console.warn('[API-SPORTS] Fixtures query returned errors:', fixturesData.errors);
+            fallbackReason = JSON.stringify(fixturesData.errors);
+            hasError = true;
+          }
+          
           if (fixturesData.response && fixturesData.response.length > 0) {
             const mappedFixtures = fixturesData.response.map((f, idx) => {
               const home = f.teams.home.name;
@@ -635,6 +642,12 @@ export default async function handler(req, res) {
         if (nextQuota <= 90) {
           const standingsRes = await fetch(`https://v3.football.api-sports.io/standings?league=${LEAGUE_ID}&season=${SEASON}`, { headers });
           const standingsData = await standingsRes.json();
+          
+          if (standingsData.errors && Object.keys(standingsData.errors).length > 0) {
+            console.warn('[API-SPORTS] Standings query returned errors:', standingsData.errors);
+            fallbackReason = JSON.stringify(standingsData.errors);
+            hasError = true;
+          }
           
           if (standingsData.response && standingsData.response.length > 0) {
             const rawStandings = standingsData.response[0].league.standings;
@@ -684,6 +697,17 @@ export default async function handler(req, res) {
 
           const assistsRes = await fetch(`https://v3.football.api-sports.io/players/topassists?league=${LEAGUE_ID}&season=${SEASON}`, { headers });
           const assistsData = await assistsRes.json();
+
+          if (scorersData.errors && Object.keys(scorersData.errors).length > 0) {
+            console.warn('[API-SPORTS] Scorers query returned errors:', scorersData.errors);
+            fallbackReason = JSON.stringify(scorersData.errors);
+            hasError = true;
+          }
+          if (assistsData.errors && Object.keys(assistsData.errors).length > 0) {
+            console.warn('[API-SPORTS] Assists query returned errors:', assistsData.errors);
+            fallbackReason = JSON.stringify(assistsData.errors);
+            hasError = true;
+          }
 
           const mappedStats = { goals: [], assists: [], cleanSheets: mockTopStatsData.cleanSheets, discipline: mockTopStatsData.discipline };
 
@@ -745,6 +769,7 @@ export default async function handler(req, res) {
         dailyCallCount: currentQuota,
         hasError,
         isSimulated: hasError || (!cachedFixtures && !cachedStandings && !cachedStats),
+        reason: fallbackReason || (!apiKey ? "missing_api_key" : (currentQuota >= 90 ? "quota_exceeded" : "")),
         leagueId: LEAGUE_ID,
         season: SEASON
       }
@@ -766,6 +791,7 @@ export default async function handler(req, res) {
         hasError: true,
         rawError: error.message || String(error),
         isSimulated: true,
+        reason: fallbackReason || (!apiKey ? "missing_api_key" : (currentQuota >= 90 ? "quota_exceeded" : "upstream_catch_error")),
         leagueId: LEAGUE_ID,
         season: SEASON
       }
