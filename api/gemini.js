@@ -5,6 +5,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 const rateLimitMap = new Map();
 const LIMIT = 20; // max 20 requests per minute
 const WINDOW = 60 * 1000; // 1 minute
+const MAX_PROMPT_LENGTH = 8_000;
 
 function isRateLimited(ip) {
   const now = Date.now();
@@ -43,8 +44,9 @@ export default async function handler(req, res) {
     }
   }
 
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader('Access-Control-Allow-Methods', 'POST,OPTIONS');
   res.setHeader(
     'Access-Control-Allow-Headers',
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
@@ -55,7 +57,10 @@ export default async function handler(req, res) {
   }
 
   // Rate Limiter check
-  const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
+  const forwardedFor = req.headers['x-forwarded-for'];
+  const ip = (Array.isArray(forwardedFor) ? forwardedFor[0] : forwardedFor?.split(',')[0])?.trim()
+    || req.socket.remoteAddress
+    || 'unknown';
   if (isRateLimited(ip)) {
     return res.status(429).json({ error: 'Too many requests. Please try again later.' });
   }
@@ -64,9 +69,12 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { prompt } = req.body;
-  if (!prompt) {
+  const { prompt } = req.body || {};
+  if (typeof prompt !== 'string' || !prompt.trim()) {
     return res.status(400).json({ error: 'Prompt is required' });
+  }
+  if (prompt.length > MAX_PROMPT_LENGTH) {
+    return res.status(413).json({ error: `Prompt must be ${MAX_PROMPT_LENGTH} characters or fewer` });
   }
 
   const apiKey = process.env.GEMINI_API_KEY;

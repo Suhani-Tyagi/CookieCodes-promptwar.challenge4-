@@ -80,6 +80,24 @@ describe('api/gemini API handler', () => {
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ error: 'Prompt is required' }));
   });
 
+  it('rejects non-string and oversized prompts before calling Gemini', async () => {
+    const invalid = mockReqRes('POST', { prompt: { text: 'hello' } });
+    await handler(invalid.req, invalid.res);
+    expect(invalid.res.status).toHaveBeenCalledWith(400);
+
+    const oversized = mockReqRes('POST', { prompt: 'a'.repeat(8001) });
+    await handler(oversized.req, oversized.res);
+    expect(oversized.res.status).toHaveBeenCalledWith(413);
+    expect(mockGenerateContent).not.toHaveBeenCalled();
+  });
+
+  it('advertises only the HTTP methods the endpoint supports', async () => {
+    const { req, res } = mockReqRes('OPTIONS');
+    await handler(req, res);
+    expect(res.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Methods', 'POST,OPTIONS');
+    expect(res.setHeader).toHaveBeenCalledWith('Vary', 'Origin');
+  });
+
   it('returns 500 if GEMINI_API_KEY env variable is missing', async () => {
     delete process.env.GEMINI_API_KEY;
     const { req, res } = mockReqRes('POST', { prompt: 'hello' });

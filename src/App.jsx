@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { lazy, Suspense, useState, useEffect } from 'react';
 import { useApp } from './context/AppContext.jsx';
 import { 
   LayoutDashboard, 
@@ -15,17 +15,22 @@ import {
 
 // Import Views & Components
 import DashboardHome from './components/DashboardHome.jsx';
-import SmartCompanion from './components/SmartCompanion.jsx';
 import ServiceDirectory from './components/ServiceDirectory.jsx';
 import IssueReporter from './components/IssueReporter.jsx';
 import SettingsPanel from './components/SettingsPanel.jsx';
-import MatchCenter from './components/MatchCenter.jsx';
 import ConcessionsPanel from './components/ConcessionsPanel.jsx';
-import ControlRoomView from './components/ControlRoomView.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import Sidebar from './components/Sidebar.jsx';
 import Header from './components/Header.jsx';
 import { TABS } from './constants/tabs.js';
+
+const ControlRoomView = lazy(() => import('./components/ControlRoomView.jsx'));
+const MatchCenter = lazy(() => import('./components/MatchCenter.jsx'));
+const SmartCompanion = lazy(() => import('./components/SmartCompanion.jsx'));
+
+function LoadingView() {
+  return <p className="p-6 text-sm text-zinc-500" role="status">Loading workspace…</p>;
+}
 
 export default function App() {
   const { 
@@ -153,9 +158,11 @@ export default function App() {
           {/* Tab View Router */}
           <main id="main-content" className="flex-1 overflow-y-auto p-4 md:p-8 max-w-[1600px] w-full mx-auto animate-fade-in">
             {activeTab === TABS.DASHBOARD && <ErrorBoundary><DashboardHome /></ErrorBoundary>}
-            {activeTab === TABS.CONTROLROOM && <ErrorBoundary><ControlRoomView /></ErrorBoundary>}
-            {activeTab === TABS.SCORES && <ErrorBoundary><MatchCenter /></ErrorBoundary>}
-            {activeTab === TABS.COMPANION && <ErrorBoundary><SmartCompanion /></ErrorBoundary>}
+            <Suspense fallback={<LoadingView />}>
+              {activeTab === TABS.CONTROLROOM && <ErrorBoundary><ControlRoomView /></ErrorBoundary>}
+              {activeTab === TABS.SCORES && <ErrorBoundary><MatchCenter /></ErrorBoundary>}
+              {activeTab === TABS.COMPANION && <ErrorBoundary><SmartCompanion /></ErrorBoundary>}
+            </Suspense>
             {activeTab === TABS.SERVICES && <ErrorBoundary><ServiceDirectory /></ErrorBoundary>}
             {activeTab === TABS.FOOD && <ErrorBoundary><ConcessionsPanel /></ErrorBoundary>}
             {activeTab === TABS.COMPLAINTS && <ErrorBoundary><IssueReporter /></ErrorBoundary>}

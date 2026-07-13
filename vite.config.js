@@ -19,8 +19,6 @@ export default defineConfig({
           'vendor-echarts': ['echarts', 'echarts-for-react'],
           // Lucide icons
           'vendor-lucide': ['lucide-react'],
-          // Google Generative AI SDK
-          'vendor-genai': ['@google/generative-ai'],
         },
       },
     },

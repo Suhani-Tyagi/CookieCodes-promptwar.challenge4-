@@ -72,6 +72,17 @@ describe('api/verify-passcode API handler', () => {
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ error: 'Passcode is required' }));
   });
 
+  it('rejects non-string passcodes and advertises only supported methods', async () => {
+    const invalid = mockReqRes('POST', { passcode: 1234 });
+    await handler(invalid.req, invalid.res);
+    expect(invalid.res.status).toHaveBeenCalledWith(400);
+
+    const preflight = mockReqRes('OPTIONS');
+    await handler(preflight.req, preflight.res);
+    expect(preflight.res.setHeader).toHaveBeenCalledWith('Access-Control-Allow-Methods', 'POST,OPTIONS');
+    expect(preflight.res.setHeader).toHaveBeenCalledWith('Vary', 'Origin');
+  });
+
   it('returns valid: true for correct passcode', async () => {
     const { req, res } = mockReqRes('POST', { passcode: 'secret123' });
     await handler(req, res);

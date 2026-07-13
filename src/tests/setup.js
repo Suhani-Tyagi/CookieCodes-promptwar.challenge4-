@@ -22,5 +22,14 @@ Object.defineProperty(window, 'localStorage', {
   value: localStorageMock
 });
 
+// Prevent component tests from issuing real network requests during mount.
+global.fetch = vi.fn().mockResolvedValue({
+  ok: true,
+  json: async () => ({
+    isSimulated: true,
+    lastUpdated: Date.now()
+  })
+});
+
 // Mock scrollIntoView for jsdom
 window.HTMLElement.prototype.scrollIntoView = vi.fn();

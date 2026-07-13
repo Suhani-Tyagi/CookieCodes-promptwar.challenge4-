@@ -69,7 +69,7 @@ export default function MatchCenter() {
             )}
           </div>
           <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Real-time live scores, brackets, standings, and player statistics.
+            Match schedules, brackets, standings, and player statistics.
             {sportsDataLastUpdated && (
               <span className="ml-2 text-[10px] text-zinc-400 dark:text-zinc-500">
                 (Last updated: {new Date(sportsDataLastUpdated).toLocaleTimeString()})
@@ -109,9 +109,11 @@ export default function MatchCenter() {
       </div>
 
       {/* Tab headers */}
-      <div className="flex border-b border-zinc-200 dark:border-zinc-800 gap-1.5 scrollbar-none overflow-x-auto">
+      <div role="tablist" aria-label="Match center sections" className="flex border-b border-zinc-200 dark:border-zinc-800 gap-1.5 scrollbar-none overflow-x-auto">
         <button
           onClick={() => setSportsTab('matches')}
+          role="tab"
+          aria-selected={sportsTab === 'matches'}
           className={`px-4 py-2.5 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap ${
             sportsTab === 'matches'
               ? 'border-emerald-500 text-emerald-605 dark:text-emerald-400'
@@ -124,6 +126,8 @@ export default function MatchCenter() {
 
         <button
           onClick={() => setSportsTab('bracket')}
+          role="tab"
+          aria-selected={sportsTab === 'bracket'}
           className={`px-4 py-2.5 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap ${
             sportsTab === 'bracket'
               ? 'border-emerald-500 text-emerald-605 dark:text-emerald-400'
@@ -136,6 +140,8 @@ export default function MatchCenter() {
 
         <button
           onClick={() => setSportsTab('standings')}
+          role="tab"
+          aria-selected={sportsTab === 'standings'}
           className={`px-4 py-2.5 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap ${
             sportsTab === 'standings'
               ? 'border-emerald-500 text-emerald-605 dark:text-emerald-400'
@@ -148,6 +154,8 @@ export default function MatchCenter() {
 
         <button
           onClick={() => setSportsTab('stats')}
+          role="tab"
+          aria-selected={sportsTab === 'stats'}
           className={`px-4 py-2.5 text-xs font-bold transition-all border-b-2 flex items-center gap-1.5 whitespace-nowrap ${
             sportsTab === 'stats'
               ? 'border-emerald-500 text-emerald-605 dark:text-emerald-400'
@@ -160,6 +168,7 @@ export default function MatchCenter() {
       </div>
 
       {/* TAB CONTENT AREA */}
+      <div role="tabpanel" aria-label={`${sportsTab} match center content`}>
       {sportsTab === 'matches' && (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 animate-fade-in">
           
@@ -177,6 +186,7 @@ export default function MatchCenter() {
                   <Search className="absolute left-3 top-2.5 w-4 h-4 text-zinc-400" />
                   <input 
                     type="text" 
+                    aria-label="Search teams, cities, or stadiums"
                     placeholder="Search teams, cities, or stadiums..." 
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
@@ -186,6 +196,7 @@ export default function MatchCenter() {
                 
                 <div className="flex gap-2">
                   <select 
+                    aria-label="Filter matches by stage"
                     value={stageFilter}
                     onChange={(e) => setStageFilter(e.target.value)}
                     className="px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs focus:outline-none font-bold"
@@ -197,6 +208,7 @@ export default function MatchCenter() {
                   </select>
 
                   <select 
+                    aria-label="Filter matches by date"
                     value={dateFilter}
                     onChange={(e) => setDateFilter(e.target.value)}
                     className="px-3 py-2 bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs focus:outline-none font-bold"
@@ -218,8 +230,18 @@ export default function MatchCenter() {
                     const mStatus = computeMatchStatus(m);
                     return (
                       <div
+                        role="button"
+                        tabIndex={0}
                         key={m.id}
                         onClick={() => setSelectedMatchId(m.id)}
+                        onKeyDown={(event) => {
+                          if (event.key === 'Enter' || event.key === ' ') {
+                            event.preventDefault();
+                            setSelectedMatchId(m.id);
+                          }
+                        }}
+                        aria-pressed={isActive}
+                        aria-label={`Select ${m.teamA} versus ${m.teamB}`}
                         className={`p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between h-32 relative overflow-hidden ${
                           isActive
                             ? 'bg-zinc-50 dark:bg-zinc-900/50 border-zinc-355 dark:border-zinc-705 shadow-sm ring-1 ring-emerald-500'
@@ -286,7 +308,7 @@ export default function MatchCenter() {
                 <span>Next Stage Kickoff</span>
               </h3>
               <div className="p-4 rounded-xl bg-zinc-50 dark:bg-zinc-900/50 text-xs text-zinc-655 dark:text-zinc-400 leading-relaxed font-semibold">
-                The Quarter-Finals commence on **Friday, July 10, 2026** at Gillette Stadium in Boston with France vs Morocco. Group standings are fully completed.
+                This training view uses clearly labelled simulated tournament data when a live provider is unavailable. Confirm official match details before making operational decisions.
               </div>
             </div>
           </div>
@@ -306,6 +328,7 @@ export default function MatchCenter() {
           initiatingVideoRef={initiatingVideoRef}
         />
       )}
+      </div>
 
     </div>
   );
