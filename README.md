@@ -39,13 +39,17 @@ The solution features real-time crowd management routing, an AI match scheduler,
 ## Environment Variables
 
 Configure these variables in your deployment settings (e.g. Vercel) or your local environment:
-
+ 
 | Variable | Description | Example |
 | :--- | :--- | :--- |
 | `SECURITY_PASSCODE` | Safe passcode required for administrative access | `MySecurePasscode2026` |
 | `ALLOWED_ORIGINS` | Comma-separated list of origins permitted to call API routes | `https://my-app.vercel.app,http://localhost:5173` |
 | `GEMINI_API_KEY` | Live Gemini model token for production queries | `AIzaSy...` |
 | `SPORTS_DATA_API_KEY` | Live API-SPORTS token for real-time tournament details | `your_api_sports_key` |
+| `KV_URL` | Vercel KV connection URL (automatically set by Vercel KV integration) | `redis://...` |
+| `KV_REST_API_URL` | Vercel KV REST API URL (automatically set by Vercel KV integration) | `https://...` |
+| `KV_REST_API_TOKEN` | Vercel KV REST API write token (automatically set by Vercel KV integration) | `your_kv_write_token` |
+| `KV_REST_API_READ_ONLY_TOKEN` | Vercel KV REST API read token (automatically set by Vercel KV integration) | `your_kv_read_token` |
 
 ---
 
@@ -56,10 +60,11 @@ ArenaAssist 2026 integrates real-time match fixtures, group standings, and playe
 ### Quota-Aware Architecture
 API-SPORTS has a free-tier limit of **100 requests/day**. To protect this quota and guarantee uptime:
 - **Serverless API Proxy (`api/sports-data.js`)**: All frontend requests go through this serverless route which acts as a cache layer.
+- **Vercel KV Persistent Cache**: Caching is stored on Vercel KV rather than inside serverless container memory. This guarantees that cache state persists across serverless cold starts and is shared atomically across all container instances.
 - **Server-Side Cache TTL**:
-  - Fixtures are cached for **20 minutes**.
-  - Group standings and top player statistics are cached for **60 minutes**.
-- **Daily Quota safety net**: The proxy tracks the number of real upstream requests made since UTC midnight. If the counter reaches **90 requests**, it automatically halts upstream calls and serves cached data or fallback mocks until the daily reset.
+  - Fixtures are cached for **20 minutes** (TTL enforced via Vercel KV expiration).
+  - Group standings and top player statistics are cached for **60 minutes** (TTL enforced via Vercel KV expiration).
+- **Daily Quota safety net**: The proxy tracks the number of real upstream requests made since UTC midnight using atomic increments on a daily namespaced Redis key (`sports_quota:YYYY-MM-DD`). If the counter reaches **90 requests**, it automatically halts upstream calls and serves cached data or fallback mocks until the daily reset.
 - **Graceful Fallback**: If the API key is not configured, the daily quota is reached, or the upstream API responds with an error, the application automatically falls back to pre-packaged simulated tournament mock data and displays a **Simulated Data** badge in the Match Center header.
 - **Manual Refresh**: Users can trigger a manual update with the **Refresh** button inside the Match Center, which is safely protected by the server-side TTL.
 

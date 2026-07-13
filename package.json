@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.11.0",
+    "@vercel/kv": "^3.0.0",
     "echarts": "^5.4.3",
     "echarts-for-react": "^3.0.2",
     "lucide-react": "^0.294.0",
