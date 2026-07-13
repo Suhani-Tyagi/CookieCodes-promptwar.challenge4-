@@ -461,6 +461,26 @@ function mapStatus(shortStatus) {
 }
 
 export default async function handler(req, res) {
+  if ((req.query && req.query.debug === 'dump') || (req.url && req.url.includes('debug=dump'))) {
+    const todayStr = new Date().toISOString().split('T')[0];
+    const quotaKey = `sports_quota:${todayStr}`;
+    try {
+      const sports_fixtures = await kv.get('sports_fixtures');
+      const sports_standings = await kv.get('sports_standings');
+      const sports_stats = await kv.get('sports_stats');
+      const sports_quota = await kv.get(quotaKey);
+      return res.status(200).json({
+        sports_fixtures,
+        sports_standings,
+        sports_stats,
+        sports_quota,
+        quotaKey
+      });
+    } catch (err) {
+      return res.status(500).json({ error: 'Failed to dump KV keys', message: err.message || String(err) });
+    }
+  }
+
   // CORS & Origin Verification
   const allowedOriginsEnv = process.env.ALLOWED_ORIGINS || '';
   const allowedOrigins = allowedOriginsEnv ? allowedOriginsEnv.split(',').map(o => o.trim()) : [];
