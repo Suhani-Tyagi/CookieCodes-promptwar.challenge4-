@@ -36,9 +36,14 @@ export default function FanDashboardView({
         <div className="absolute left-1/3 bottom-0 w-24 h-24 opacity-10 rounded-full blur-xl pointer-events-none" style={{ background: activeMatch.teamBColors.primary }}></div>
         
         <div className="space-y-1">
-          <span className="text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-emerald-105 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/30">
-            FIFA Fans Portal
-          </span>
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="text-xs px-2.5 py-0.5 rounded-full font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-950/20">
+              FIFA Fans Portal
+            </span>
+            <span className="text-[9px] bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 px-2.5 py-0.5 rounded-full font-black uppercase tracking-wider shadow-sm animate-pulse">
+              ⚠️ SIMULATED EXHIBITION DATA
+            </span>
+          </div>
           <h2 className="text-xl font-extrabold tracking-tight mt-2">
             Welcome to the Pitch, {userProfile.name}! ⚽
           </h2>

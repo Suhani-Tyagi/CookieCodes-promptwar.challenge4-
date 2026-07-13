@@ -85,9 +85,12 @@ export const MatchHeroVisualizer = React.memo(function MatchHeroVisualizer({ mat
       </div>
 
       {/* "CLASH OF TITANS" Glowing Rivalry Badge */}
-      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none">
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-20 pointer-events-none flex flex-col items-center gap-1.5">
         <span className="text-xs font-black tracking-[0.35em] text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-fuchsia-400 to-blue-400 bg-black/75 px-4 py-1.5 rounded-full border border-fuchsia-500/20 shadow-[0_0_15px_rgba(217,70,239,0.25)] uppercase">
           CLASH OF TITANS
+        </span>
+        <span className="text-[9px] font-black text-amber-300 bg-amber-950/80 px-3 py-0.5 rounded-md border border-amber-500/40 uppercase tracking-widest shadow-lg animate-pulse">
+          ⚠️ SIMULATED EXHIBITION DATA
         </span>
       </div>
 

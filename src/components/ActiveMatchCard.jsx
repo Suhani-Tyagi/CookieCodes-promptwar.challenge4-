@@ -17,6 +17,10 @@ export default function ActiveMatchCard({
         <div className="h-full flex-1" style={{ background: activeMatch.teamBColors.primary }}></div>
       </div>
 
+      <div className="bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 px-3.5 py-2 rounded-xl text-center text-[10px] font-black tracking-wider uppercase flex items-center justify-center gap-1.5 shadow-sm">
+        <span>⚠️ SIMULATED EXHIBITION TOURNAMENT DATA</span>
+      </div>
+
       <div className="flex justify-between items-center text-xs border-b border-zinc-100 dark:border-zinc-900 pb-3">
         <div className="flex items-center gap-2 font-bold text-zinc-650 dark:text-zinc-400">
           <Clock className="w-4 h-4 text-emerald-500" />

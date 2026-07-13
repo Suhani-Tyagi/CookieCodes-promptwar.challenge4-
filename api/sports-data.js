@@ -31,6 +31,37 @@ const STATS_TTL_SECS = 60 * 60; // 60 minutes
 const LEAGUE_ID = 1;
 const SEASON = 2026;
 
+const MATCH_OFFSETS = {
+  M1: { days: 2, time: "17:00 Local" },
+  M2: { days: 3, time: "20:00 Local" },
+  M3: { days: 3, time: "16:00 Local" },
+  M4: { days: 4, time: "19:00 Local" },
+  M5: { days: -6, time: "15:00 Local" },
+  M6: { days: -6, time: "20:00 Local" },
+  M7: { days: -8, time: "19:00 Local" },
+  M8: { days: -8, time: "20:00 Local" },
+  M9: { days: -7, time: "18:00 Local" },
+  M13: { days: -32, time: "18:00 Local" }
+};
+
+function getRelativeDateString(daysFromNow, now = new Date()) {
+  const targetDate = new Date(now.getTime());
+  targetDate.setDate(targetDate.getDate() + daysFromNow);
+  
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const month = months[targetDate.getMonth()];
+  const day = String(targetDate.getDate()).padStart(2, '0');
+  const year = targetDate.getFullYear();
+  
+  return `${month} ${day}, ${year}`;
+}
+
+function getRelativeMatchDate(matchId, now = new Date()) {
+  const offset = MATCH_OFFSETS[matchId];
+  if (!offset) return getRelativeDateString(0, now);
+  return getRelativeDateString(offset.days, now);
+}
+
 // Mock Fallback Data matching AppContext expected shapes
 const mockMatches = [
   {
@@ -41,8 +72,8 @@ const mockMatches = [
     teamBFlag: "🇲🇦",
     teamAColors: { primary: "#002395", secondary: "#ED2939", accent: "#FFFFFF", name: "France Royal Blue" },
     teamBColors: { primary: "#006241", secondary: "#C1272D", accent: "#FFFFFF", name: "Morocco Green & Red" },
-    time: "17:00 Local",
-    date: "Jul 10, 2026",
+    time: MATCH_OFFSETS.M1.time,
+    date: getRelativeMatchDate("M1"),
     stadium: "Boston Stadium, Boston",
     status: "UPCOMING",
     minute: "QF 1",
@@ -74,8 +105,8 @@ const mockMatches = [
     teamBFlag: "🇧🇪",
     teamAColors: { primary: "#C1272D", secondary: "#FEDF00", accent: "#002395", name: "Spain Red & Gold" },
     teamBColors: { primary: "#000000", secondary: "#DD0000", accent: "#FEDF00", name: "Belgium Black & Red" },
-    time: "20:00 Local",
-    date: "Jul 11, 2026",
+    time: MATCH_OFFSETS.M2.time,
+    date: getRelativeMatchDate("M2"),
     stadium: "SoFi Stadium, Los Angeles",
     status: "UPCOMING",
     minute: "QF 2",
@@ -107,8 +138,8 @@ const mockMatches = [
     teamBFlag: "🇦🇷",
     teamAColors: { primary: "#FFFFFF", secondary: "#000000", accent: "#FFCC00", name: "Germany White" },
     teamBColors: { primary: "#75AADB", secondary: "#FFFFFF", accent: "#75AADB", name: "Argentina Albiceleste" },
-    time: "16:00 Local",
-    date: "Jul 12, 2026",
+    time: MATCH_OFFSETS.M3.time,
+    date: getRelativeMatchDate("M3"),
     stadium: "MetLife Stadium, NJ",
     status: "UPCOMING",
     minute: "QF 3",
@@ -140,8 +171,8 @@ const mockMatches = [
     teamBFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
     teamAColors: { primary: "#BA0C2F", secondary: "#00205B", accent: "#FFFFFF", name: "Norway Red" },
     teamBColors: { primary: "#FFFFFF", secondary: "#CF0820", accent: "#00205B", name: "England White" },
-    time: "19:00 Local",
-    date: "Jul 13, 2026",
+    time: MATCH_OFFSETS.M4.time,
+    date: getRelativeMatchDate("M4"),
     stadium: "Arrowhead Stadium, Kansas City",
     status: "UPCOMING",
     minute: "QF 4",
@@ -173,8 +204,8 @@ const mockMatches = [
     teamBFlag: "🇨🇦",
     teamAColors: { primary: "#006241", secondary: "#C1272D", accent: "#FFFFFF", name: "Morocco Green" },
     teamBColors: { primary: "#FF0000", secondary: "#FFFFFF", accent: "#FF0000", name: "Canada Red" },
-    time: "15:00 Local",
-    date: "Jul 07, 2026",
+    time: MATCH_OFFSETS.M5.time,
+    date: getRelativeMatchDate("M5"),
     stadium: "BMO Field, Toronto",
     status: "COMPLETED",
     minute: "Round of 16",
@@ -199,8 +230,8 @@ const mockMatches = [
     teamBFlag: "🇧🇷",
     teamAColors: { primary: "#BA0C2F", secondary: "#00205B", accent: "#FFFFFF", name: "Norway Red" },
     teamBColors: { primary: "#FEDF00", secondary: "#009B3A", accent: "#00205B", name: "Brazil Gold" },
-    time: "20:00 Local",
-    date: "Jul 07, 2026",
+    time: MATCH_OFFSETS.M6.time,
+    date: getRelativeMatchDate("M6"),
     stadium: "MetLife Stadium, NJ",
     status: "COMPLETED",
     minute: "Round of 16",
@@ -225,8 +256,8 @@ const mockMatches = [
     teamBFlag: "🇵🇹",
     teamAColors: { primary: "#C1272D", secondary: "#FEDF00", accent: "#002395", name: "Spain Red" },
     teamBColors: { primary: "#006600", secondary: "#FF0000", accent: "#FFFFFF", name: "Portugal Red" },
-    time: "19:00 Local",
-    date: "Jul 05, 2026",
+    time: MATCH_OFFSETS.M7.time,
+    date: getRelativeMatchDate("M7"),
     stadium: "Hard Rock Stadium, Miami",
     status: "COMPLETED",
     minute: "Round of 16",
@@ -249,8 +280,8 @@ const mockMatches = [
     teamBFlag: "🇲🇽",
     teamAColors: { primary: "#FFFFFF", secondary: "#CF0820", accent: "#00205B", name: "England White" },
     teamBColors: { primary: "#006847", secondary: "#D00C27", accent: "#FFFFFF", name: "Mexico Green" },
-    time: "20:00 Local",
-    date: "Jul 05, 2026",
+    time: MATCH_OFFSETS.M8.time,
+    date: getRelativeMatchDate("M8"),
     stadium: "Gillette Stadium, Boston",
     status: "COMPLETED",
     minute: "Round of 16",
@@ -275,8 +306,8 @@ const mockMatches = [
     teamAFlag: "🇧🇪",
     teamB: "USA",
     teamBFlag: "🇺🇸",
-    time: "18:00 Local",
-    date: "Jul 06, 2026",
+    time: MATCH_OFFSETS.M9.time,
+    date: getRelativeMatchDate("M9"),
     stadium: "SoFi Stadium, Los Angeles",
     status: "COMPLETED",
     minute: "Round of 16",
@@ -300,8 +331,8 @@ const mockMatches = [
     teamAFlag: "🇲🇽",
     teamB: "South Africa",
     teamBFlag: "🇿🇦",
-    time: "18:00 Local",
-    date: "Jun 11, 2026",
+    time: MATCH_OFFSETS.M13.time,
+    date: getRelativeMatchDate("M13"),
     stadium: "Estadio Azteca, Mexico City",
     status: "COMPLETED",
     minute: "Group A",

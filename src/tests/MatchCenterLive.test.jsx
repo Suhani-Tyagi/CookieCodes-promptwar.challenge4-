@@ -42,13 +42,13 @@ describe('MatchCenter - Live Match Integration UI', () => {
   it('shows the "Simulated Data" badge when isSportsDataSimulated is true', () => {
     mockUseAppContextValue.isSportsDataSimulated = true;
     render(<MatchCenter />);
-    expect(screen.getByText(/Simulated Data/i)).toBeInTheDocument();
+    expect(screen.getByText(/SIMULATED EXHIBITION DATA/i)).toBeInTheDocument();
   });
 
   it('hides the "Simulated Data" badge when isSportsDataSimulated is false', () => {
     mockUseAppContextValue.isSportsDataSimulated = false;
     render(<MatchCenter />);
-    expect(screen.queryByText(/Simulated Data/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/SIMULATED EXHIBITION DATA/i)).not.toBeInTheDocument();
   });
 
   it('renders the "Last updated" timestamp correctly when sportsDataLastUpdated is set', () => {

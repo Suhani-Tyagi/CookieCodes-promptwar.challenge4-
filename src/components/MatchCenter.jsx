@@ -63,8 +63,8 @@ export default function MatchCenter() {
           <div className="flex items-center gap-2 flex-wrap">
             <h2 className="text-2xl font-black tracking-tight">FIFA World Cup 2026 Match Center</h2>
             {isSportsDataSimulated && (
-              <span className="text-[10px] bg-amber-100 dark:bg-amber-950/40 text-amber-800 dark:text-amber-400 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
-                Simulated Data
+              <span className="text-[10px] bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 px-3 py-1 rounded-lg font-black uppercase tracking-wider flex items-center gap-1.5 shadow-sm animate-pulse">
+                <span>⚠️ SIMULATED EXHIBITION DATA</span>
               </span>
             )}
           </div>
