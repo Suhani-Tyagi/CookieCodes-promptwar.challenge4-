@@ -1,7 +1,6 @@
 /**
  * @fileoverview Tests for ErrorBoundary component — render, error catch, reset.
  */
-import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import ErrorBoundary from '../components/ErrorBoundary.jsx';
@@ -68,7 +67,7 @@ describe('ErrorBoundary — Error State', () => {
       return <div data-testid="recovered">Recovered!</div>;
     }
 
-    const { rerender } = render(
+    render(
       <ErrorBoundary>
         <ControlledBroken />
       </ErrorBoundary>
