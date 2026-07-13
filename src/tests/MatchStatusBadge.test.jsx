@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { MatchHeroVisualizer } from '../components/MatchHeroVisualizer.jsx';
-import { computeMatchStatus } from '../context/AppContext.jsx';
+import { computeMatchStatus } from '../utils/matchStatus.js';
 
 describe('Match Status Date Computation', () => {
   afterEach(() => {
@@ -36,16 +36,9 @@ describe('Match Status Date Computation', () => {
       minute: 'QF 1'
     };
 
-    // Calculate computed status dynamically
-    const computedStatus = computeMatchStatus(match, new Date());
-    const matchWithComputedStatus = {
-      ...match,
-      status: computedStatus
-    };
-
     render(
       <MatchHeroVisualizer 
-        match={matchWithComputedStatus}
+        match={match}
         liveActive={false}
         onToggleLive={vi.fn()}
       />

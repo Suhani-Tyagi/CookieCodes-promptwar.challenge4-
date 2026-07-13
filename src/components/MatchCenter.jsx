@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useApp } from '../context/AppContext.jsx';
 import { Trophy, Calendar, Play, Tv, GitBranch, Star, Search } from 'lucide-react';
 import ActiveMatchCard from './ActiveMatchCard.jsx';
+import { computeMatchStatus } from '../utils/matchStatus.js';
 import BracketTreeTab from './BracketTreeTab.jsx';
 import StandingsTab from './StandingsTab.jsx';
 import PlayerLeaderboards from './PlayerLeaderboards.jsx';
@@ -214,6 +215,7 @@ export default function MatchCenter() {
                 {filteredMatches.length > 0 ? (
                   filteredMatches.map((m) => {
                     const isActive = selectedMatchId === m.id;
+                    const mStatus = computeMatchStatus(m);
                     return (
                       <div
                         key={m.id}
@@ -227,8 +229,8 @@ export default function MatchCenter() {
                         <div className="flex justify-between items-start text-[10px] text-zinc-455 font-bold border-b border-zinc-200/50 dark:border-zinc-850 pb-1.5">
                           <span>{m.date} • {m.time}</span>
                           <span className={`px-1.5 py-0.5 rounded uppercase font-bold text-[8px] ${
-                            m.status === 'LIVE' ? 'bg-red-500 text-white animate-pulse' : 'bg-zinc-200 text-zinc-655 dark:bg-zinc-800 dark:text-zinc-400'
-                          }`}>{m.status}</span>
+                            mStatus === 'LIVE' ? 'bg-red-500 text-white animate-pulse' : 'bg-zinc-200 text-zinc-655 dark:bg-zinc-800 dark:text-zinc-400'
+                          }`}>{mStatus}</span>
                         </div>
 
                         <div className="flex items-center justify-between my-2">
@@ -236,7 +238,7 @@ export default function MatchCenter() {
                             <span className="text-xl leading-none">{m.teamAFlag}</span>
                             <span>{m.teamA}</span>
                           </span>
-                          {m.status !== 'UPCOMING' ? (
+                          {mStatus !== 'UPCOMING' ? (
                             <span className="font-mono font-bold text-xs bg-zinc-250 dark:bg-zinc-800 px-2 py-0.5 rounded">
                               {m.scoreA} - {m.scoreB}
                             </span>
@@ -251,7 +253,7 @@ export default function MatchCenter() {
 
                         <div className="flex justify-between items-center mt-1 border-t border-zinc-100 dark:border-zinc-900 pt-1">
                           <p className="text-[8px] text-zinc-400 truncate max-w-[120px]">{m.stadium.split(',')[0]}</p>
-                          {m.status === 'COMPLETED' && (
+                          {mStatus === 'COMPLETED' && (
                             <button
                               onClick={(e) => {
                                   e.stopPropagation();

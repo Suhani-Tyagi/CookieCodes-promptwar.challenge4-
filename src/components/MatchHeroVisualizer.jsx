@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Tv } from 'lucide-react';
+import { computeMatchStatus } from '../utils/matchStatus.js';
 
 /**
  * WorldCupTrophy component rendering a custom golden SVG trophy.
@@ -227,7 +228,7 @@ export const MatchHeroVisualizer = React.memo(function MatchHeroVisualizer({ mat
           <strong className="text-zinc-300 font-bold">{match.date} • {match.time} (IST)</strong>
         </div>
 
-        {match.status !== 'UPCOMING' ? (
+        {computeMatchStatus(match) !== 'UPCOMING' ? (
           <div className="bg-zinc-900 border border-zinc-800 px-4 py-1.5 rounded-xl text-center">
             <span className="text-xs text-zinc-400 block uppercase font-bold">Match Score</span>
             <span className="font-mono text-base font-black text-white tracking-widest">{match.scoreA} : {match.scoreB}</span>

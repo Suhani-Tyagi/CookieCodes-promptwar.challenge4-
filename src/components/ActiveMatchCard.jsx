@@ -1,12 +1,15 @@
 import React from 'react';
 import { Clock, Play } from 'lucide-react';
 import PlayerPortrait from './PlayerPortrait.jsx';
+import { computeMatchStatus } from '../utils/matchStatus.js';
 
 export default function ActiveMatchCard({
   activeMatch,
   liveDemoActive,
   openHighlights
 }) {
+  const status = computeMatchStatus(activeMatch);
+
   return (
     <div className="bg-white dark:bg-[#0c0c0f] border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 shadow-sm space-y-6 relative overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-1.5 flex">
@@ -17,8 +20,8 @@ export default function ActiveMatchCard({
       <div className="flex justify-between items-center text-xs border-b border-zinc-100 dark:border-zinc-900 pb-3">
         <div className="flex items-center gap-2 font-bold text-zinc-650 dark:text-zinc-400">
           <Clock className="w-4 h-4 text-emerald-500" />
-          <span>Status: <span className={activeMatch.status === 'LIVE' ? 'text-red-500 animate-pulse font-black' : 'text-zinc-550'}>{activeMatch.status}</span></span>
-          {activeMatch.status === 'LIVE' && <span>• {activeMatch.minute}</span>}
+          <span>Status: <span className={status === 'LIVE' ? 'text-red-500 animate-pulse font-black' : 'text-zinc-550'}>{status}</span></span>
+          {status === 'LIVE' && <span>• {activeMatch.minute}</span>}
         </div>
         {liveDemoActive && (
           <span className="text-[9px] bg-red-100 dark:bg-red-955/20 text-red-700 dark:text-red-400 px-2 py-0.5 rounded font-bold uppercase animate-pulse">
@@ -41,7 +44,7 @@ export default function ActiveMatchCard({
         </div>
 
         <div className="px-6 text-center">
-          {activeMatch.status !== 'UPCOMING' ? (
+          {status !== 'UPCOMING' ? (
             <div className="font-mono text-4xl font-black px-6 py-2 bg-zinc-100 dark:bg-zinc-900 rounded-2xl shadow border border-zinc-200 dark:border-zinc-800 tracking-wider flex items-center gap-2">
               <span className="text-zinc-900 dark:text-white">{activeMatch.scoreA}</span>
               <span className="opacity-40 text-2xl">:</span>
@@ -100,7 +103,7 @@ export default function ActiveMatchCard({
         </div>
       )}
 
-      {activeMatch.status === 'COMPLETED' && (
+      {status === 'COMPLETED' && (
         <button
           onClick={() => openHighlights(activeMatch)}
           className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-bold text-xs shadow-sm flex items-center justify-center gap-2 transition-all"

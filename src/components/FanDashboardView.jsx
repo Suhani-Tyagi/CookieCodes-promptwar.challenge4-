@@ -1,6 +1,7 @@
 import React from 'react';
 import { Sparkles, ChevronRight, Compass, ArrowRight, Leaf, Award, Bus } from 'lucide-react';
 import { MatchHeroVisualizer } from './MatchHeroVisualizer.jsx';
+import { computeMatchStatus } from '../utils/matchStatus.js';
 
 /**
  * FanDashboardView component rendering the personalized portal for fans.
@@ -71,7 +72,7 @@ export default function FanDashboardView({
             >
               <span>{m.teamAFlag} vs {m.teamBFlag}</span>
               <span className="opacity-75">({m.teamA} v {m.teamB})</span>
-              {m.status === 'LIVE' && (
+              {computeMatchStatus(m) === 'LIVE' && (
                 <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
               )}
             </button>
