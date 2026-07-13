@@ -2,7 +2,7 @@
  * @fileoverview Tests for AppContext — translation, eco-points, settings persistence.
  */
 import React from 'react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, act, fireEvent } from '@testing-library/react';
 import { AppProvider, useApp } from '../context/AppContext.jsx';
 
@@ -148,5 +148,44 @@ describe('AppContext — userProfile', () => {
   it('has a non-empty name', () => {
     render(<AppProvider><ProfileTest /></AppProvider>);
     expect(screen.getByTestId('name').textContent.length).toBeGreaterThan(0);
+  });
+});
+
+describe('AppContext — localStorage Throw Resilience', () => {
+  beforeEach(() => {
+    vi.spyOn(localStorage, 'getItem').mockImplementation(() => {
+      throw new Error('SecurityError: The operation is insecure.');
+    });
+    vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
+      throw new Error('QuotaExceededError');
+    });
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  it('renders provider without crashing even when localStorage operations throw errors', () => {
+    function SimpleConsumer() {
+      const { theme, userProfile, settings } = useApp();
+      return (
+        <div>
+          <span data-testid="theme">{theme}</span>
+          <span data-testid="role">{userProfile.role}</span>
+          <span data-testid="api-mode">{settings.apiMode}</span>
+        </div>
+      );
+    }
+
+    render(
+      <AppProvider>
+        <SimpleConsumer />
+      </AppProvider>
+    );
+
+    // Fallbacks are set
+    expect(screen.getByTestId('theme').textContent).toBe('dark');
+    expect(screen.getByTestId('role').textContent).toBe('Organizer');
+    expect(screen.getByTestId('api-mode').textContent).toBe('live');
   });
 });

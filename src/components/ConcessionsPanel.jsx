@@ -102,8 +102,7 @@ export default function ConcessionsPanel() {
   const updateQty = (itemId, amount) => {
     setCart(prev => prev.map(i => {
       if (i.id === itemId) {
-        const nextQty = i.qty + amount;
-        return nextQty > 0 ? { ...i, qty: nextQty } : i;
+        return { ...i, qty: i.qty + amount };
       }
       return i;
     }).filter(i => i.qty > 0));
@@ -343,13 +342,14 @@ export default function ConcessionsPanel() {
                     {cart.map((item) => (
                       <div key={item.id} className="flex justify-between items-center gap-2 text-xs py-1 border-b border-zinc-50 dark:border-zinc-900/50">
                         <div className="space-y-0.5">
-                          <span className="font-bold text-zinc-850 dark:text-zinc-200">{item.name}</span>
+                          <span data-testid="cart-item-name" className="font-bold text-zinc-850 dark:text-zinc-200">{item.name}</span>
                           <span className="text-[10px] text-zinc-400 font-bold block">${item.price.toFixed(2)} each</span>
                         </div>
 
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => updateQty(item.id, -1)}
+                            aria-label="Decrease quantity"
                             className="p-1 rounded bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-850"
                           >
                             <Minus className="w-3 h-3" />
@@ -357,6 +357,7 @@ export default function ConcessionsPanel() {
                           <span className="font-mono font-bold text-zinc-850 dark:text-zinc-150 w-4 text-center">{item.qty}</span>
                           <button
                             onClick={() => updateQty(item.id, 1)}
+                            aria-label="Increase quantity"
                             className="p-1 rounded bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-850"
                           >
                             <Plus className="w-3 h-3" />

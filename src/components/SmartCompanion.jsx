@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../context/AppContext.jsx';
 import { generateText } from '../services/geminiClient.js';
 import { validateText, sanitizeText } from '../utils/sanitize.js';
+import useChatSessions from '../hooks/useChatSessions.js';
 import { 
   Send, 
   Mic, 
@@ -74,160 +75,15 @@ export default function SmartCompanion() {
   const { chatHistory, setChatHistory, settings, language, userProfile, t } = useApp();
   const [activeSubTab, setActiveSubTab] = useState('chat'); // 'chat' or 'simplifier'
 
-  // Chat sessions state
-  const [chatSessions, setChatSessions] = useState(() => {
-    try {
-      const saved = localStorage.getItem('fifa_chat_sessions');
-      return saved ? JSON.parse(saved) : [];
-    } catch (e) {
-      return [];
-    }
-  });
-
-  const [activeSessionId, setActiveSessionId] = useState(() => {
-    return localStorage.getItem('fifa_active_session_id') || '';
-  });
-
-  // Sync sessions to localStorage
-  useEffect(() => {
-    localStorage.setItem('fifa_chat_sessions', JSON.stringify(chatSessions));
-  }, [chatSessions]);
-
-  useEffect(() => {
-    if (activeSessionId) {
-      localStorage.setItem('fifa_active_session_id', activeSessionId);
-    } else {
-      localStorage.removeItem('fifa_active_session_id');
-    }
-  }, [activeSessionId]);
-
-  // Load active session on mount
-  useEffect(() => {
-    if (activeSessionId) {
-      const session = chatSessions.find(s => s.id === activeSessionId);
-      if (session) {
-        setChatHistory(session.messages);
-      }
-    } else if (chatSessions.length > 0) {
-      setActiveSessionId(chatSessions[0].id);
-      setChatHistory(chatSessions[0].messages);
-    }
-  }, []);
-
-  // Sync active chatHistory back to the active session in chatSessions
-  useEffect(() => {
-    if (chatHistory.length === 0) return;
-    if (chatHistory.length === 1 && chatHistory[0].sender === 'ai' && chatHistory[0].text.includes('Hello!')) {
-      return;
-    }
-
-    setChatSessions(prev => {
-      const activeId = activeSessionId || 'session-' + Date.now();
-      if (!activeSessionId) {
-        setActiveSessionId(activeId);
-      }
-
-      const exists = prev.some(s => s.id === activeId);
-      if (exists) {
-        return prev.map(s => {
-          if (s.id === activeId) {
-            let title = s.title;
-            if (title === 'Untitled Chat' || title === 'New Chat' || title === 'Untitled Session') {
-              const firstUserMsg = chatHistory.find(m => m.sender === 'user');
-              if (firstUserMsg) {
-                title = firstUserMsg.text.length > 30 ? firstUserMsg.text.substring(0, 27) + '...' : firstUserMsg.text;
-              }
-            }
-            return { ...s, messages: chatHistory, title };
-          }
-          return s;
-        });
-      } else {
-        let title = 'Untitled Chat';
-        const firstUserMsg = chatHistory.find(m => m.sender === 'user');
-        if (firstUserMsg) {
-          title = firstUserMsg.text.length > 30 ? firstUserMsg.text.substring(0, 27) + '...' : firstUserMsg.text;
-        }
-        return [
-          {
-            id: activeId,
-            title,
-            messages: chatHistory,
-            timestamp: new Date().toLocaleDateString()
-          },
-          ...prev
-        ];
-      }
-    });
-  }, [chatHistory, activeSessionId]);
-
-  const handleStartNewChat = () => {
-    const newId = 'session-' + Date.now();
-    setActiveSessionId(newId);
-    setChatHistory([
-      {
-        sender: 'ai',
-        text: "Hello! I am your ArenaAssist FIFA Stadium Companion for the FIFA World Cup 2026. Ask me questions about stadium gates, accessibility, transit shuttles, rules, or report issues. How can I help you today?",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      }
-    ]);
-  };
-
-  const handleClearActiveChat = () => {
-    setChatHistory([
-      {
-        sender: 'ai',
-        text: "Hello! I am your ArenaAssist FIFA Stadium Companion for the FIFA World Cup 2026. Ask me questions about stadium gates, accessibility, transit shuttles, rules, or report issues. How can I help you today?",
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      }
-    ]);
-    if (activeSessionId) {
-      setChatSessions(prev => prev.map(s => {
-        if (s.id === activeSessionId) {
-          return {
-            ...s,
-            title: 'New Chat',
-            messages: [
-              {
-                sender: 'ai',
-                text: "Hello! I am your ArenaAssist FIFA Stadium Companion for the FIFA World Cup 2026. Ask me questions about stadium gates, accessibility, transit shuttles, rules, or report issues. How can I help you today?",
-                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-              }
-            ]
-          };
-        }
-        return s;
-      }));
-    }
-  };
-
-  const handleLoadSession = (sessionId) => {
-    const session = chatSessions.find(s => s.id === sessionId);
-    if (session) {
-      setActiveSessionId(sessionId);
-      setChatHistory(session.messages);
-    }
-  };
-
-  const handleDeleteSession = (sessionId) => {
-    setChatSessions(prev => prev.filter(s => s.id !== sessionId));
-    if (activeSessionId === sessionId) {
-      const remaining = chatSessions.filter(s => s.id !== sessionId);
-      if (remaining.length > 0) {
-        setActiveSessionId(remaining[0].id);
-        setChatHistory(remaining[0].messages);
-      } else {
-        handleStartNewChat();
-      }
-    }
-  };
-
-  const handleClearAllSessions = () => {
-    setChatSessions([]);
-    localStorage.removeItem('fifa_chat_sessions');
-    localStorage.removeItem('fifa_active_session_id');
-    handleStartNewChat();
-  };
+  const {
+    chatSessions,
+    activeSessionId,
+    handleStartNewChat,
+    handleClearActiveChat,
+    handleLoadSession,
+    handleDeleteSession,
+    handleClearAllSessions
+  } = useChatSessions();
 
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -560,7 +416,7 @@ Regulations Text: ${policyText}`;
                           ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/30 dark:text-emerald-450 border border-emerald-200/55 dark:border-emerald-800/35' 
                           : 'bg-blue-100 text-blue-800 dark:bg-blue-950/30 dark:text-blue-400 border border-blue-200/55 dark:border-blue-800/35'
                       }`}>
-                        {isAI ? 'AA' : userProfile.name[0]}
+                        {isAI ? 'AA' : (userProfile && userProfile.name ? userProfile.name[0] : 'U')}
                       </div>
 
                       {/* Msg Box */}
@@ -695,6 +551,7 @@ Regulations Text: ${policyText}`;
                       </button>
                       <button
                         onClick={() => handleDeleteSession(session.id)}
+                        aria-label="Delete chat session"
                         className="opacity-0 group-hover:opacity-100 text-zinc-400 hover:text-rose-500 p-0.5 rounded transition-all"
                         title="Delete chat session"
                       >
@@ -723,6 +580,7 @@ Regulations Text: ${policyText}`;
                   <button
                     key={idx}
                     onClick={() => handleSendMessage(chip.text)}
+                    aria-label={`Ask about ${chip.text}`}
                     className="text-[10px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-850 px-2 py-1 rounded-full text-zinc-600 dark:text-zinc-400 transition-colors"
                   >
                     {chip.text}

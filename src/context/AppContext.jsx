@@ -136,17 +136,21 @@ export const AppProvider = ({ children }) => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [language, setLanguage] = useState('en');
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('theme') || 'dark';
+    try {
+      return localStorage.getItem('theme') || 'dark';
+    } catch (e) {
+      return 'dark';
+    }
   });
 
   const [userProfile, setUserProfile] = useState(() => {
-    const saved = localStorage.getItem('userProfile');
-    if (saved) {
-      try {
+    try {
+      const saved = localStorage.getItem('userProfile');
+      if (saved) {
         return JSON.parse(saved);
-      } catch (e) {
-        console.error("Error parsing userProfile:", e);
       }
+    } catch (e) {
+      console.error("Error parsing userProfile from localStorage:", e);
     }
     return {
       name: "Marcus Miller",
@@ -212,8 +216,16 @@ export const AppProvider = ({ children }) => {
     }
   ]);
 
-  const [settings, setSettings] = useState({
-    apiMode: localStorage.getItem('gemini_api_mode') || "live"
+  const [settings, setSettings] = useState(() => {
+    try {
+      return {
+        apiMode: localStorage.getItem('gemini_api_mode') || "live"
+      };
+    } catch (e) {
+      return {
+        apiMode: "live"
+      };
+    }
   });
 
   const [liveDemoActive, setLiveDemoActive] = useState(false);
@@ -722,12 +734,20 @@ export const AppProvider = ({ children }) => {
     } else {
       root.classList.remove('dark');
     }
-    localStorage.setItem('theme', theme);
+    try {
+      localStorage.setItem('theme', theme);
+    } catch (e) {
+      console.warn("theme localStorage sync failed:", e);
+    }
   }, [theme]);
 
   // Sync Profile details
   useEffect(() => {
-    localStorage.setItem('userProfile', JSON.stringify(userProfile));
+    try {
+      localStorage.setItem('userProfile', JSON.stringify(userProfile));
+    } catch (e) {
+      console.warn("userProfile localStorage sync failed:", e);
+    }
   }, [userProfile]);
 
   const t = (key) => {
@@ -790,7 +810,11 @@ export const AppProvider = ({ children }) => {
 
   const saveSettings = (newSettings) => {
     setSettings(newSettings);
-    localStorage.setItem('gemini_api_mode', newSettings.apiMode);
+    try {
+      localStorage.setItem('gemini_api_mode', newSettings.apiMode);
+    } catch (e) {
+      console.warn("gemini_api_mode localStorage sync failed:", e);
+    }
   };
 
   const dismissNotification = (id) => {

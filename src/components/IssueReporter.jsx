@@ -36,7 +36,7 @@ const stadiumLocations = [
 ];
 
 // High-fidelity Offline Vector Graphic Illustrations simulating real life photos
-function IncidentGraphics({ category, className = "w-14 h-14 rounded-lg shrink-0 flex items-center justify-center border" }) {
+const IncidentGraphics = React.memo(function IncidentGraphics({ category, className = "w-14 h-14 rounded-lg shrink-0 flex items-center justify-center border" }) {
   switch (category) {
     case "Crowd Congestion":
       return (
@@ -225,7 +225,7 @@ function IncidentGraphics({ category, className = "w-14 h-14 rounded-lg shrink-0
         </div>
       );
   }
-}
+});
 
 export default function IssueReporter() {
   const { 

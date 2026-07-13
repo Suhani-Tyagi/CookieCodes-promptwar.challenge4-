@@ -11,18 +11,6 @@ export const ROLES = {
   ORGANIZER: 'Organizer',
 };
 
-/** @readonly @enum {string} */
-export const TABS = {
-  DASHBOARD: 'dashboard',
-  CONTROLROOM: 'controlroom',
-  SCORES: 'scores',
-  COMPANION: 'companion',
-  SERVICES: 'services',
-  FOOD: 'food',
-  COMPLAINTS: 'complaints',
-  SETTINGS: 'settings',
-};
-
 /** Ordered list of roles for display in dropdowns */
 export const ROLES_LIST = [
   { code: ROLES.FAN, label: 'Fan (Guest)' },
